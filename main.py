@@ -233,7 +233,7 @@ def show_tutorial_screen():
         ),
         (
             "[bold yellow]Progression & Scoring:[/bold yellow]\n"
-            "You start with 6 Skips (►) and 6 Lives (♥).\n"
+            "You start with 3 Skips (►) and 3 Lives (♥).\n"
             "Earn +1 Skip every 5 wins, and +1 Life every 10 wins.\n"
             "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
             "Harder difficulties award more points. Good luck!"
@@ -258,8 +258,8 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     header_text.append(f"♦ Score: ", style="bold")
     header_text.append(f"{score}", style="cyan")
     
-    heart_str = "♥" * lives + "♡" * (6 - lives)
-    skip_str = "►" * skips + "▹" * (6 - skips)
+    heart_str = "♥" * lives + "♡" * (3 - lives)
+    skip_str = "►" * skips + "▹" * (3 - skips)
     
     header_text.append("  |  Lives: ")
     header_text.append(heart_str)
@@ -384,10 +384,10 @@ def play_game(levels):
         
     while True: 
         score = 0
-        skips = 6
+        skips = 3
         successful_guesses = 0
         total_levels_played = 0
-        lives = 6
+        lives = 3
         
         unplayed = {}
         for d in diff_order:
@@ -398,10 +398,12 @@ def play_game(levels):
         current_difficulty_idx = 0
 
         while True: 
+            # Ensure base difficulty tier contains unplayed words, recycling pools if all depleted
             attempts_diff = 0
             while attempts_diff < 6:
                 diff_name = diff_order[current_difficulty_idx]
-                if unplayed[diff_name]: break
+                if unplayed[diff_name]: 
+                    break
                 else:
                     current_difficulty_idx = (current_difficulty_idx + 1) % 6
                     attempts_diff += 1
@@ -415,14 +417,51 @@ def play_game(levels):
                 if not unplayed[diff_name]:
                     console.print("[red]Error: No playable levels found. Exiting.[/red]")
                     sys.exit()
+
+            # Dynamic difficulty scaling selection
+            level_num = total_levels_played + 1
+            chosen_diff_idx = None
             
-            current_level = unplayed[diff_name].pop(0)
+            if level_num % 5 == 0:
+                # Guaranteed next harder difficulty that has unfinished words
+                for idx in range(current_difficulty_idx + 1, len(diff_order)):
+                    if unplayed[diff_order[idx]]:
+                        chosen_diff_idx = idx
+                        break
+                if chosen_diff_idx is None:
+                    chosen_diff_idx = current_difficulty_idx
+            else:
+                # Small upscale chance to next hardest or second next hardest, scaling per win
+                upscale_chance = min(0.30, 0.03 + 0.005 * successful_guesses)
+                if random.random() < upscale_chance:
+                    next_idx = current_difficulty_idx + 1
+                    second_idx = current_difficulty_idx + 2
+                    
+                    next_ok = next_idx < len(diff_order) and bool(unplayed[diff_order[next_idx]])
+                    second_ok = second_idx < len(diff_order) and bool(unplayed[diff_order[second_idx]])
+                    
+                    if next_ok and second_ok:
+                        chosen_diff_idx = second_idx if random.random() < 0.30 else next_idx
+                    elif next_ok:
+                        chosen_diff_idx = next_idx
+                    elif second_ok:
+                        chosen_diff_idx = second_idx
+                    else:
+                        chosen_diff_idx = current_difficulty_idx
+                else:
+                    chosen_diff_idx = current_difficulty_idx
+            
+            chosen_diff_name = diff_order[chosen_diff_idx]
+            current_level = unplayed[chosen_diff_name].pop(0)
+            
             word1, word2 = current_level["w1"], current_level["w2"]
             length = len(word1)
             
-            tier_total = len(by_diff[diff_name])
-            tier_done = tier_total - len(unplayed[diff_name])
+            tier_total = len(by_diff[chosen_diff_name])
+            tier_done = tier_total - len(unplayed[chosen_diff_name])
             progress = f"{tier_done}/{tier_total}"
+            
+            diff_name = chosen_diff_name
             
             grid = {1: [None] * length, 2: [None] * length}
             active_row = 1
@@ -502,11 +541,11 @@ def play_game(levels):
                             earned_skip = False
                             earned_life = False
                             
-                            if successful_guesses % 5 == 0 and skips < 6:
+                            if successful_guesses % 5 == 0 and skips < 3:
                                 skips += 1
                                 earned_skip = True
                                 
-                            if successful_guesses % 10 == 0 and lives < 6:
+                            if successful_guesses % 10 == 0 and lives < 3:
                                 lives += 1
                                 earned_life = True
                             
