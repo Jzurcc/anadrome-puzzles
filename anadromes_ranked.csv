@@ -1,0 +1,486 @@
+Word 1,Word 2,Length,Difficulty Score,Difficulty Class
+saw,was,3,0.2572,Very Easy
+and,dna,3,0.3216,Very Easy
+not,ton,3,0.3721,Very Easy
+are,era,3,0.4129,Very Easy
+dah,had,3,0.4278,Very Easy
+but,tub,3,0.4311,Very Easy
+now,won,3,0.455,Very Easy
+dias,said,4,0.4714,Very Easy
+man,nam,3,0.4922,Very Easy
+der,red,3,0.4924,Very Easy
+dog,god,3,0.5101,Very Easy
+emit,time,4,0.5125,Very Easy
+def,fed,3,0.5149,Very Easy
+nos,son,3,0.523,Very Easy
+may,yam,3,0.5273,Very Easy
+emos,some,4,0.5286,Very Easy
+part,trap,4,0.5337,Very Easy
+edam,made,4,0.5417,Very Easy
+know,wonk,4,0.5519,Easy
+evil,live,4,0.5559,Easy
+let,tel,3,0.5584,Easy
+den,ned,3,0.5602,Easy
+got,tog,3,0.5628,Easy
+raw,war,3,0.5707,Easy
+way,yaw,3,0.571,Easy
+new,wen,3,0.5723,Easy
+del,led,3,0.5795,Easy
+moor,room,4,0.5854,Easy
+pas,sap,3,0.5856,Easy
+net,ten,3,0.5916,Easy
+dem,med,3,0.597,Easy
+devil,lived,5,0.5981,Easy
+door,rood,4,0.601,Easy
+far,raf,3,0.6011,Easy
+pos,sop,3,0.6052,Easy
+nor,ron,3,0.6119,Easy
+par,rap,3,0.6201,Easy
+mit,tim,3,0.6278,Easy
+keep,peek,4,0.628,Easy
+law,wal,3,0.6291,Easy
+able,elba,4,0.6317,Easy
+mon,nom,3,0.6332,Easy
+eton,note,4,0.6407,Easy
+mot,tom,3,0.6432,Easy
+pot,top,3,0.6434,Easy
+miles,selim,5,0.6444,Easy
+dial,laid,4,0.6446,Easy
+air,ria,3,0.647,Easy
+nus,sun,3,0.6531,Easy
+meet,teem,4,0.6538,Easy
+rus,sur,3,0.6538,Easy
+boy,yob,3,0.6545,Easy
+bad,dab,3,0.6568,Easy
+enif,fine,4,0.6577,Easy
+parts,strap,5,0.6578,Easy
+bed,deb,3,0.6584,Easy
+big,gib,3,0.6588,Easy
+los,sol,3,0.6611,Easy
+spot,tops,4,0.6618,Easy
+nav,van,3,0.6644,Easy
+six,xis,3,0.6647,Easy
+pots,stop,4,0.6661,Easy
+draw,ward,4,0.6662,Easy
+deep,peed,4,0.6667,Easy
+per,rep,3,0.6693,Easy
+pay,yap,3,0.6748,Easy
+pets,step,4,0.6799,Easy
+dat,tad,3,0.6799,Easy
+secret,terces,6,0.6888,Medium
+arm,mra,3,0.6893,Medium
+mir,rim,3,0.6895,Medium
+don,nod,3,0.69,Medium
+peels,sleep,5,0.6949,Medium
+las,sal,3,0.7051,Medium
+dam,mad,3,0.7078,Medium
+lit,til,3,0.71,Medium
+mus,sum,3,0.7118,Medium
+dir,rid,3,0.7138,Medium
+guns,snug,4,0.7176,Medium
+drawer,reward,6,0.7226,Medium
+mas,sam,3,0.7247,Medium
+ear,rae,3,0.7274,Medium
+han,nah,3,0.7278,Medium
+animal,lamina,6,0.73,Medium
+doom,mood,4,0.7304,Medium
+flow,wolf,4,0.7314,Medium
+mos,som,3,0.7321,Medium
+edit,tide,4,0.7327,Medium
+rats,star,4,0.7375,Medium
+notes,seton,5,0.7396,Medium
+deeps,speed,5,0.7403,Medium
+dim,mid,3,0.7413,Medium
+knar,rank,4,0.7416,Medium
+mes,sem,3,0.7422,Medium
+aim,mia,3,0.7435,Medium
+edom,mode,4,0.7489,Medium
+anu,una,3,0.7502,Medium
+kramer,remark,6,0.755,Medium
+elam,male,4,0.7579,Medium
+oder,redo,4,0.7593,Medium
+lias,sail,4,0.7627,Medium
+deliver,reviled,7,0.7637,Medium
+kcal,lack,4,0.764,Medium
+diam,maid,4,0.7652,Medium
+gas,sag,3,0.7687,Medium
+deer,reed,4,0.7689,Medium
+hem,meh,3,0.7698,Medium
+ages,sega,4,0.7705,Medium
+pit,tip,3,0.7724,Medium
+spots,stops,5,0.7725,Medium
+dray,yard,4,0.7732,Medium
+eel,lee,3,0.7737,Medium
+dine,enid,4,0.7743,Medium
+gar,rag,3,0.7773,Medium
+eros,sore,4,0.7781,Medium
+cap,pac,3,0.7787,Medium
+dos,sod,3,0.7787,Medium
+ate,eta,3,0.7795,Medium
+bag,gab,3,0.7797,Medium
+ben,neb,3,0.7808,Medium
+dan,nad,3,0.7819,Medium
+bid,dib,3,0.7821,Medium
+gel,leg,3,0.7827,Medium
+bon,nob,3,0.784,Medium
+fer,ref,3,0.7841,Medium
+liar,rail,4,0.7868,Medium
+dew,wed,3,0.7895,Medium
+loop,pool,4,0.7896,Medium
+fig,gif,3,0.7905,Medium
+gut,tug,3,0.7928,Medium
+nap,pan,3,0.7929,Medium
+nat,tan,3,0.7932,Medium
+lap,pal,3,0.7948,Medium
+fires,serif,5,0.7965,Medium
+straw,warts,5,0.7965,Medium
+draws,sward,5,0.7976,Medium
+dis,sid,3,0.7986,Medium
+bin,nib,3,0.799,Medium
+dig,gid,3,0.799,Medium
+lion,noil,4,0.8017,Hard
+nit,tin,3,0.8019,Hard
+liam,mail,4,0.8021,Hard
+regor,roger,5,0.8035,Hard
+hay,yah,3,0.8038,Hard
+decaf,faced,5,0.8042,Hard
+drag,gard,4,0.8046,Hard
+bis,sib,3,0.8053,Hard
+res,ser,3,0.8073,Hard
+smart,trams,5,0.81,Hard
+deg,ged,3,0.8108,Hard
+gnus,sung,4,0.811,Hard
+ave,eva,3,0.8123,Hard
+bot,tob,3,0.8124,Hard
+eur,rue,3,0.8164,Hard
+deem,meed,4,0.8166,Hard
+dor,rod,3,0.8174,Hard
+taw,wat,3,0.8175,Hard
+map,pam,3,0.8186,Hard
+spit,tips,4,0.8187,Hard
+lever,revel,5,0.8196,Hard
+mar,ram,3,0.8196,Hard
+lots,stol,4,0.8198,Hard
+pupils,slipup,6,0.8199,Hard
+tort,trot,4,0.8221,Hard
+nip,pin,3,0.8224,Hard
+bor,rob,3,0.8226,Hard
+nut,tun,3,0.8233,Hard
+pat,tap,3,0.8234,Hard
+dot,tod,3,0.8244,Hard
+rat,tar,3,0.8247,Hard
+hen,neh,3,0.8248,Hard
+dennis,sinned,6,0.8252,Hard
+emil,lime,4,0.8261,Hard
+trow,wort,4,0.8277,Hard
+pans,snap,4,0.8282,Hard
+cam,mac,3,0.8284,Hard
+pools,sloop,5,0.829,Hard
+eris,sire,4,0.8301,Hard
+min,nim,3,0.8301,Hard
+harris,sirrah,6,0.8308,Hard
+gem,meg,3,0.8308,Hard
+ass,ssa,3,0.8317,Hard
+irs,sri,3,0.8321,Hard
+ports,strop,5,0.8325,Hard
+amis,sima,4,0.8338,Hard
+snot,tons,4,0.835,Hard
+ali,ila,3,0.835,Hard
+loot,tool,4,0.8359,Hard
+dort,trod,4,0.8371,Hard
+mat,tam,3,0.8371,Hard
+evan,nave,4,0.8374,Hard
+leon,noel,4,0.8377,Hard
+sway,yaws,4,0.8378,Hard
+gum,mug,3,0.8382,Hard
+rot,tor,3,0.8402,Hard
+bah,hab,3,0.8417,Hard
+bus,sub,3,0.8421,Hard
+pus,sup,3,0.843,Hard
+idol,lodi,4,0.8438,Hard
+bur,rub,3,0.8466,Hard
+dar,rad,3,0.8468,Hard
+gen,neg,3,0.8476,Hard
+jar,raj,3,0.8496,Hard
+anon,nona,4,0.8507,Hard
+mils,slim,4,0.851,Hard
+gan,nag,3,0.8514,Hard
+maws,swam,4,0.8515,Hard
+bud,dub,3,0.8518,Hard
+hin,nih,3,0.8521,Hard
+jam,maj,3,0.8535,Hard
+aras,sara,4,0.8537,Hard
+lev,vel,3,0.8537,Hard
+bats,stab,4,0.8553,Hard
+hoop,pooh,4,0.8553,Hard
+bard,drab,4,0.8554,Hard
+dart,trad,4,0.8555,Hard
+deil,lied,4,0.8567,Hard
+eliot,toile,5,0.857,Hard
+cos,soc,3,0.8576,Hard
+leper,repel,5,0.8577,Hard
+leer,reel,4,0.8577,Hard
+maps,spam,4,0.8591,Hard
+gur,rug,3,0.8593,Hard
+cit,tic,3,0.8596,Hard
+lager,regal,5,0.8601,Hard
+enol,lone,4,0.8601,Hard
+ark,kra,3,0.8603,Hard
+bat,tab,3,0.8604,Hard
+depot,toped,5,0.8606,Hard
+mss,ssm,3,0.8623,Hard
+daw,wad,3,0.8631,Hard
+dom,mod,3,0.8631,Hard
+pins,snip,4,0.8632,Hard
+gam,mag,3,0.8634,Hard
+amor,roma,4,0.8638,Hard
+nero,oren,4,0.8644,Hard
+avon,nova,4,0.8654,Hard
+lav,val,3,0.866,Hard
+cal,lac,3,0.8675,Hard
+flog,golf,4,0.8686,Hard
+tow,wot,3,0.8696,Hard
+spat,taps,4,0.8706,Hard
+pals,slap,4,0.8712,Hard
+mut,tum,3,0.8716,Hard
+diaper,repaid,6,0.8722,Hard
+dag,gad,3,0.8731,Hard
+lien,neil,4,0.8735,Hard
+anat,tana,4,0.8738,Hard
+nips,spin,4,0.8741,Hard
+cor,roc,3,0.8749,Hard
+paws,swap,4,0.875,Hard
+gal,lag,3,0.875,Hard
+fret,terf,4,0.876,Hard
+naps,span,4,0.8768,Hard
+burg,grub,4,0.8769,Hard
+etas,sate,4,0.8775,Hard
+denies,seined,6,0.8787,Hard
+keel,leek,4,0.8792,Hard
+amos,soma,4,0.8794,Hard
+delian,nailed,6,0.8795,Hard
+damon,nomad,5,0.8804,Hard
+ajar,raja,4,0.8805,Hard
+ape,epa,3,0.8826,Hard
+pis,sip,3,0.8828,Hard
+avis,siva,4,0.8834,Hard
+keels,sleek,5,0.8838,Hard
+cod,doc,3,0.8849,Hard
+ailed,delia,5,0.8866,Hard
+cork,kroc,4,0.8867,Hard
+ban,nab,3,0.887,Hard
+remit,timer,5,0.8876,Hard
+deus,sued,4,0.8877,Hard
+fir,rif,3,0.8885,Hard
+gulp,plug,4,0.8888,Hard
+sonnet,tennos,6,0.889,Hard
+gats,stag,4,0.8901,Hard
+stew,wets,4,0.8926,Hard
+elbert,treble,6,0.8931,Hard
+edo,ode,3,0.8936,Hard
+gnaw,wang,4,0.8949,Hard
+gat,tag,3,0.8952,Hard
+suez,zeus,4,0.8954,Hard
+bro,orb,3,0.8961,Hard
+evian,naive,5,0.8973,Hard
+bonk,knob,4,0.8989,Hard
+snoops,spoons,6,0.8992,Hard
+eire,erie,4,0.8993,Hard
+raps,spar,4,0.8996,Hard
+atlas,salta,5,0.9004,Very Hard
+aram,mara,4,0.9004,Very Hard
+liven,nevil,5,0.901,Very Hard
+bog,gob,3,0.9012,Very Hard
+rots,stor,4,0.9015,Very Hard
+eeg,gee,3,0.9016,Very Hard
+decal,laced,5,0.9017,Very Hard
+brag,garb,4,0.9026,Very Hard
+gums,smug,4,0.9065,Very Hard
+aver,reva,4,0.907,Very Hard
+dap,pad,3,0.907,Very Hard
+dews,swed,4,0.9074,Very Hard
+niger,regin,5,0.9079,Very Hard
+lem,mel,3,0.908,Very Hard
+dual,laud,4,0.9083,Very Hard
+girt,trig,4,0.9084,Very Hard
+lair,rial,4,0.9087,Very Hard
+lin,nil,3,0.9088,Very Hard
+aron,nora,4,0.9091,Very Hard
+corp,proc,4,0.9092,Very Hard
+nev,ven,3,0.9099,Very Hard
+mart,tram,4,0.9101,Very Hard
+emir,rime,4,0.9103,Very Hard
+gals,slag,4,0.9109,Very Hard
+hap,pah,3,0.9123,Very Hard
+cram,marc,4,0.9124,Very Hard
+flor,rolf,4,0.9137,Very Hard
+langer,regnal,6,0.9158,Very Hard
+ante,etna,4,0.9165,Very Hard
+reit,tier,4,0.9165,Very Hard
+duo,oud,3,0.9169,Very Hard
+bal,lab,3,0.9173,Very Hard
+loops,spool,5,0.9175,Very Hard
+denier,reined,6,0.9177,Very Hard
+buns,snub,4,0.9181,Very Hard
+andes,sedna,5,0.9191,Very Hard
+ergo,ogre,4,0.9196,Very Hard
+snit,tins,4,0.9207,Very Hard
+annam,manna,5,0.9215,Very Hard
+kurt,truk,4,0.9216,Very Hard
+kay,yak,3,0.922,Very Hard
+nader,redan,5,0.9224,Very Hard
+ger,reg,3,0.9224,Very Hard
+lop,pol,3,0.9253,Very Hard
+debut,tubed,5,0.9274,Very Hard
+redraw,warder,6,0.9275,Very Hard
+ats,sta,3,0.9279,Very Hard
+demit,timed,5,0.9284,Very Hard
+anele,elena,5,0.9288,Very Hard
+remus,sumer,5,0.9302,Very Hard
+fao,oaf,3,0.9302,Very Hard
+reknit,tinker,6,0.9308,Very Hard
+nuts,stun,4,0.9344,Very Hard
+eam,mae,3,0.9344,Very Hard
+snaps,spans,5,0.9355,Very Hard
+pst,tsp,3,0.9367,Very Hard
+feer,reef,4,0.9372,Very Hard
+knits,stink,5,0.9378,Very Hard
+dorp,prod,4,0.9378,Very Hard
+mop,pom,3,0.9383,Very Hard
+hoo,ooh,3,0.9391,Very Hard
+fiat,taif,4,0.9413,Very Hard
+asset,tessa,5,0.9415,Very Hard
+gnat,tang,4,0.943,Very Hard
+darg,grad,4,0.9463,Very Hard
+anil,lina,4,0.9471,Very Hard
+retros,sorter,6,0.9474,Very Hard
+civ,vic,3,0.9475,Very Hard
+gnats,stang,5,0.9485,Very Hard
+anas,sana,4,0.9486,Very Hard
+bros,sorb,4,0.9495,Very Hard
+bol,lob,3,0.9496,Very Hard
+baas,saab,4,0.95,Very Hard
+sports,strops,6,0.9503,Very Hard
+samos,somas,5,0.9504,Very Hard
+laver,reval,5,0.9505,Very Hard
+iras,sari,4,0.9523,Very Hard
+snips,spins,5,0.9539,Very Hard
+larum,mural,5,0.9542,Very Hard
+giro,orig,4,0.9545,Very Hard
+loots,stool,5,0.9553,Very Hard
+lees,seel,4,0.9556,Very Hard
+sloops,spools,6,0.9559,Very Hard
+gram,marg,4,0.9571,Very Hard
+arak,kara,4,0.9576,Very Hard
+arian,naira,5,0.9577,Very Hard
+agar,raga,4,0.9592,Very Hard
+buts,stub,4,0.9593,Very Hard
+stat,tats,4,0.9598,Very Hard
+denim,mined,5,0.9611,Very Hard
+bun,nub,3,0.9611,Very Hard
+amon,noma,4,0.9634,Very Hard
+enos,sone,4,0.9639,Very Hard
+coom,mooc,4,0.9643,Very Hard
+avo,ova,3,0.9648,Very Hard
+delos,soled,5,0.9649,Very Hard
+abas,saba,4,0.9659,Very Hard
+stu,uts,3,0.966,Very Hard
+hales,selah,5,0.9675,Very Hard
+oat,tao,3,0.9676,Very Hard
+arb,bra,3,0.9685,Very Hard
+dahs,shad,4,0.9716,Very Hard
+grus,surg,4,0.9722,Very Hard
+eon,noe,3,0.9724,Very Hard
+aryl,lyra,4,0.9734,Very Hard
+pes,sep,3,0.9744,Very Hard
+delbert,trebled,7,0.9746,Very Hard
+caw,wac,3,0.9747,Very Hard
+ayr,rya,3,0.9752,Very Hard
+errol,lorre,5,0.978,Very Hard
+pols,slop,4,0.9796,Very Hard
+desserts,stressed,8,0.9798,Very Hard
+ital,lati,4,0.9809,Very Hard
+ait,tia,3,0.9811,Very Hard
+silos,solis,5,0.9822,Very Hard
+aril,lira,4,0.9831,Very Hard
+resew,weser,5,0.9835,Very Hard
+lxx,xxl,3,0.9852,Very Hard
+hopi,ipoh,4,0.9858,Very Hard
+darter,retrad,6,0.9859,Very Hard
+aral,lara,4,0.9861,Very Hard
+avid,diva,4,0.9884,Very Hard
+poons,snoop,5,0.9888,Very Hard
+rets,ster,4,0.9893,Very Hard
+anal,lana,4,0.9913,Very Hard
+doh,hod,3,0.9914,Very Hard
+saps,spas,4,0.9919,Very Hard
+smut,tums,4,0.9922,Very Hard
+knaps,spank,5,0.9937,Very Hard
+bod,dob,3,0.9958,Very Hard
+rebut,tuber,5,0.9963,Very Hard
+camus,sumac,5,0.998,Very Hard
+aneles,selena,6,1.0,Insane
+deffer,reffed,6,1.0,Insane
+dialer,relaid,6,1.0,Insane
+eviler,relive,6,1.0,Insane
+looter,retool,6,1.0,Insane
+recaps,spacer,6,1.0,Insane
+rennet,tenner,6,1.0,Insane
+sleets,steels,6,1.0,Insane
+sprits,stirps,6,1.0,Insane
+airts,stria,5,1.0,Insane
+dedal,laded,5,1.0,Insane
+ladon,nodal,5,1.0,Insane
+marcs,scram,5,1.0,Insane
+nonet,tenon,5,1.0,Insane
+occas,sacco,5,1.0,Insane
+pacer,recap,5,1.0,Insane
+resat,taser,5,1.0,Insane
+sakis,sikas,5,1.0,Insane
+sauks,skuas,5,1.0,Insane
+sprat,tarps,5,1.0,Insane
+stows,swots,5,1.0,Insane
+abut,tuba,4,1.0,Insane
+amah,hama,4,1.0,Insane
+anam,mana,4,1.0,Insane
+auks,skua,4,1.0,Insane
+bots,stob,4,1.0,Insane
+gorp,prog,4,1.0,Insane
+macs,scam,4,1.0,Insane
+ofay,yafo,4,1.0,Insane
+oohs,shoo,4,1.0,Insane
+pees,seep,4,1.0,Insane
+prat,tarp,4,1.0,Insane
+rimy,ymir,4,1.0,Insane
+spay,yaps,4,1.0,Insane
+spiv,vips,4,1.0,Insane
+stet,tets,4,1.0,Insane
+swat,taws,4,1.0,Insane
+swot,tows,4,1.0,Insane
+abm,mba,3,1.0,Insane
+abs,sba,3,1.0,Insane
+apc,cpa,3,1.0,Insane
+api,ipa,3,1.0,Insane
+atp,pta,3,1.0,Insane
+avi,iva,3,1.0,Insane
+cav,vac,3,1.0,Insane
+cpu,upc,3,1.0,Insane
+ddt,tdd,3,1.0,Insane
+dep,ped,3,1.0,Insane
+dts,std,3,1.0,Insane
+duh,hud,3,1.0,Insane
+dui,iud,3,1.0,Insane
+dup,pud,3,1.0,Insane
+fps,spf,3,1.0,Insane
+gev,veg,3,1.0,Insane
+gro,org,3,1.0,Insane
+hhs,shh,3,1.0,Insane
+ibo,obi,3,1.0,Insane
+ids,sdi,3,1.0,Insane
+isp,psi,3,1.0,Insane
+kor,rok,3,1.0,Insane
+mho,ohm,3,1.0,Insane
+mys,sym,3,1.0,Insane
+pow,wop,3,1.0,Insane
+pps,spp,3,1.0,Insane
+pwt,twp,3,1.0,Insane
