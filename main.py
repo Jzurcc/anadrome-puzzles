@@ -175,37 +175,6 @@ def load_game_data(csv_file, json_file):
 try:
     import msvcrt
     is_windows = True
-    import ctypes
-    from ctypes import wintypes
-    
-    STD_INPUT_HANDLE = -10
-    kernel32 = ctypes.windll.kernel32
-    
-    class KEY_EVENT_RECORD(ctypes.Structure):
-        _fields_ = [
-            ("bKeyDown", wintypes.BOOL),
-            ("wRepeatCount", wintypes.WORD),
-            ("wVirtualKeyCode", wintypes.WORD),
-            ("wVirtualScanCode", wintypes.WORD),
-            ("UnicodeChar", wintypes.WCHAR),
-            ("dwControlKeyState", wintypes.DWORD),
-        ]
-        
-    class INPUT_RECORD(ctypes.Structure):
-        class _EVENT(ctypes.Union):
-            _fields_ = [
-                ("KeyEvent", KEY_EVENT_RECORD),
-                ("MouseEvent", ctypes.c_byte * 16),
-                ("WindowBufferSizeEvent", ctypes.c_byte * 4),
-                ("MenuEvent", ctypes.c_byte * 4),
-                ("FocusEvent", ctypes.c_byte * 4),
-            ]
-        _fields_ = [
-            ("EventType", wintypes.WORD),
-            ("Event", _EVENT),
-        ]
-        
-    h_in = kernel32.GetStdHandle(STD_INPUT_HANDLE)
 except ImportError:
     import tty
     import termios
@@ -215,32 +184,21 @@ except ImportError:
 def get_keypress():
     """Reads a single keystroke instantly."""
     if is_windows:
-        record = INPUT_RECORD()
-        num_read = wintypes.DWORD()
-        while True:
-            res = kernel32.ReadConsoleInputW(h_in, ctypes.byref(record), 1, ctypes.byref(num_read))
-            if not res or num_read.value == 0:
-                time.sleep(0.01)
-                continue
-            
-            if record.EventType == 0x0001:  # KEY_EVENT
-                key_event = record.Event.KeyEvent
-                if key_event.bKeyDown:
-                    vk = key_event.wVirtualKeyCode
-                    char = key_event.UnicodeChar
-                    
-                    if vk == 0x10: return 'shift'
-                    elif vk == 0x08: return 'back'
-                    elif vk == 0x0D: return 'enter'
-                    elif vk == 0x09: return 'tab'
-                    elif vk == 0x1B: return '\x1b'
-                    elif vk == 0x25: return 'left'
-                    elif vk == 0x27: return 'right'
-                    elif vk == 0x26: return 'up'
-                    elif vk == 0x28: return 'down'
-                    elif vk == 0x03: sys.exit() # Ctrl+C
-                    elif char != '\x00':
-                        return char.lower()
+        key = msvcrt.getch()
+        if key in (b'\x00', b'\xe0'):
+            special = msvcrt.getch()
+            if special == b'K': return 'left'
+            if special == b'M': return 'right'
+            if special == b'H': return 'up'
+            if special == b'P': return 'down'
+            return 'unknown'
+        elif key == b'\x08': return 'back'  
+        elif key == b'\r': return 'enter'   
+        elif key == b'\t': return 'tab'
+        elif key == b'\x03': sys.exit()     
+        else:
+            try: return key.decode('utf-8').lower()
+            except: return 'unknown'
     else:
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -259,7 +217,6 @@ def get_keypress():
             elif ch in ('\r', '\n'): return 'enter' 
             elif ch == '\t': return 'tab'
             elif ch == '\x03': sys.exit() 
-            elif ch == 'h': return 'shift'
             return ch.lower()
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
@@ -324,7 +281,7 @@ def show_tutorial_screen():
             "You start with 6 Skips (►) and 3 Lives (♥).\n"
             "Earn +1 Skip every 5 wins, and +1 Life every 10 wins.\n"
             "Chain correct answers to build a Streak for bonus multipliers!\n"
-            "Press [Shift] to reveal a hint letter (costs 50% of round points).\n"
+            "Press [.] to reveal a hint letter (costs 50% of round points).\n"
             "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
             "Harder difficulties award more points. Good luck!"
         )
@@ -426,14 +383,14 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         if r == 1:
             board_text.append("\n\n")
             
-    hint_title = "The Board" + ("  [dim][Shift used][/dim]" if hint_used else "  [dim][Shift] Hint[/dim]")
+    hint_title = "The Board" + ("  [dim][. used][/dim]" if hint_used else "  [dim][.] Hint[/dim]")
     board_panel = Panel(Align.center(board_text), title=hint_title, border_style=border_style, padding=(1, 2))
     
     # Footer
     footer_text = Text()
     if message:
         footer_text.append(f"{message}\n", style=border_style)
-    footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [Shift] Hint | [TAB] Skip | [ENTER] Submit | [ESC] Exit", style="dim")
+    footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [.] Hint | [TAB] Skip | [ENTER] Submit | [ESC] Exit", style="dim")
     footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
     
     return Align.center(
@@ -725,7 +682,7 @@ def play_game(levels, high_score=0):
                                 grid[active_row][active_col] = None
                                 grid[mirror_row][length - 1 - active_col] = None
 
-                elif cmd == 'shift' and not hint_used:
+                elif cmd == '.' and not hint_used:
                     # Reveal one random unfilled letter from row 1
                     empty_cols = [c for c in range(length) if grid[1][c] is None]
                     if empty_cols:
