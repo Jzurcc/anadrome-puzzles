@@ -127,19 +127,6 @@ def load_game_data(csv_file, json_file):
         entries = dict_data[word_lower].get("entries", [])
         if not entries: return None
             
-        if USE_FIRST_DEFINITION:
-            first_defn = None
-            for entry in entries:
-                senses = entry.get("senses", [])
-                for sense in senses:
-                    defn = sense.get("definition", "")
-                    if defn:
-                        first_defn = defn
-                        break
-                if first_defn: break
-            if not first_defn: return None
-            return sanitize_definition(first_defn, word_lower)
-            
         scored_senses = []
         for entry in entries:
             pos = entry.get("partOfSpeech", "Unknown")
@@ -147,10 +134,37 @@ def load_game_data(csv_file, json_file):
                 defn = sense.get("definition", "")
                 if defn:
                     score = score_definition(word_lower, defn, sense.get("tags", []), pos)
-                    scored_senses.append((defn, score))
+                    scored_senses.append((sense, pos, score))
+                    
         if not scored_senses: return None
-        scored_senses.sort(key=lambda x: x[1], reverse=True)
-        return sanitize_definition(scored_senses[0][0], word_lower)
+        
+        if not USE_FIRST_DEFINITION:
+            scored_senses.sort(key=lambda x: x[2], reverse=True)
+            
+        best_sense, best_pos, _ = scored_senses[0]
+        
+        defn = sanitize_definition(best_sense.get("definition", ""), word_lower)
+        synonyms = best_sense.get("synonyms", [])
+        examples = best_sense.get("examples", [])
+        quotes = best_sense.get("quotes", [])
+        
+        example = examples[0] if examples else None
+        
+        quote = None
+        if quotes:
+            q = random.choice(quotes)
+            quote = {
+                "text": q.get("text", ""),
+                "reference": q.get("reference", "")
+            }
+            
+        return {
+            "pos": best_pos.capitalize() if best_pos else "Unknown",
+            "definition": defn,
+            "synonyms": synonyms[:3],
+            "example": example,
+            "quote": quote
+        }
 
     try:
         with open(csv_file, 'r', encoding='utf-8') as f:
@@ -160,9 +174,17 @@ def load_game_data(csv_file, json_file):
                 if len(row) >= 2:
                     w1, w2 = row[0].strip().lower(), row[1].strip().lower()
                     diff_class = row[4].strip().title() if len(row) >= 5 else "Easy"
-                    d1, d2 = get_best_definition(w1), get_best_definition(w2)
-                    if d1 and d2:
-                        levels.append({"w1": w1.upper(), "w2": w2.upper(), "d1": d1, "d2": d2, "difficulty": diff_class})
+                    meta1, meta2 = get_best_definition(w1), get_best_definition(w2)
+                    if meta1 and meta2:
+                        levels.append({
+                            "w1": w1.upper(), "w2": w2.upper(), 
+                            "d1": meta1["definition"], "d2": meta2["definition"],
+                            "pos1": meta1["pos"], "pos2": meta2["pos"],
+                            "synonyms1": meta1["synonyms"], "synonyms2": meta2["synonyms"],
+                            "example1": meta1["example"], "example2": meta2["example"],
+                            "quote1": meta1["quote"], "quote2": meta2["quote"],
+                            "difficulty": diff_class
+                        })
     except FileNotFoundError:
         console.print(f"[red]Error: Could not find '{csv_file}'.[/red]")
         sys.exit()
@@ -319,7 +341,7 @@ def get_streak_label(streak):
 
 def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length,
               active_row, active_col, message, status="neutral", level=1, wins=0,
-              streak=0, hint_used=False):
+              streak=0, hint_level=0):
     
     tier_color = DIFF_COLORS.get(diff_name, "cyan")
     
@@ -346,10 +368,27 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     
     # Hints Panel
     hints_text = Text()
-    hints_text.append("Row 1 Hint: ", style="bold green")
-    hints_text.append(f"{current_level['d1']}\n\n")
-    hints_text.append("Row 2 Hint: ", style="bold yellow")
-    hints_text.append(f"{current_level['d2']}")
+    
+    pos1 = current_level.get('pos1', 'Unknown')
+    hints_text.append(f"Row 1 Hint ({pos1}): ", style="bold green")
+    hints_text.append(f"{current_level['d1']}\n")
+    if current_level.get('synonyms1'):
+        hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms1'])}\n", style="dim")
+    if hint_level >= 1 and current_level.get('example1'):
+        censored1 = re.sub(re.escape(current_level['w1']), "[word]", current_level['example1'], flags=re.IGNORECASE)
+        hints_text.append(f"  Example: \"{censored1}\"\n", style="italic")
+        
+    hints_text.append("\n")
+    
+    pos2 = current_level.get('pos2', 'Unknown')
+    hints_text.append(f"Row 2 Hint ({pos2}): ", style="bold yellow")
+    hints_text.append(f"{current_level['d2']}\n")
+    if current_level.get('synonyms2'):
+        hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms2'])}\n", style="dim")
+    if hint_level >= 1 and current_level.get('example2'):
+        censored2 = re.sub(re.escape(current_level['w2']), "[word]", current_level['example2'], flags=re.IGNORECASE)
+        hints_text.append(f"  Example: \"{censored2}\"\n", style="italic")
+        
     hints_panel = Panel(hints_text, title="Dictionary Definitions", border_style="blue")
     
     # Game Board
@@ -369,7 +408,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
             display_char = char if char else "_"
             
             # Mark hinted cells differently
-            is_hinted = hint_used and char is not None and grid[r][c] == char
+            is_hinted = hint_level >= 2 and char is not None and grid[r][c] == char
             
             if r == active_row and c == active_col:
                 if status == "neutral":
@@ -383,13 +422,20 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         if r == 1:
             board_text.append("\n\n")
             
-    hint_title = "The Board" + ("  [dim][. used][/dim]" if hint_used else "  [dim][.] Hint[/dim]")
+    if hint_level == 0:
+        hint_state = "  [dim][.] Hint[/dim]"
+    elif hint_level == 1:
+        hint_state = "  [dim][.] Extra Hint[/dim]"
+    else:
+        hint_state = "  [dim][Max Hints Used][/dim]"
+        
+    hint_title = f"The Board{hint_state}"
     board_panel = Panel(Align.center(board_text), title=hint_title, border_style=border_style, padding=(1, 2))
     
     # Footer
     footer_text = Text()
     if message:
-        footer_text.append(f"{message}\n", style=border_style)
+        footer_text.append(Text.from_markup(f"{message}\n", style=border_style))
     footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [.] Hint | [TAB] Skip | [ENTER] Submit | [ESC] Exit", style="dim")
     footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
     
@@ -404,6 +450,18 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
             box=box.MINIMAL
         )
     )
+
+def append_example_highlighted(text, example, word, base_style="italic cyan"):
+    """Append an example sentence to a Rich Text, bolding every occurrence of the target word."""
+    bold_style = f"bold {base_style}"
+    text.append('    "', style=base_style)
+    parts = re.split(f"({re.escape(word)})", example, flags=re.IGNORECASE)
+    for part in parts:
+        if part.lower() == word.lower():
+            text.append(part, style=bold_style)
+        else:
+            text.append(part, style=base_style)
+    text.append('"\n', style=base_style)
 
 def show_educational_debrief(level, status="win", points=0, earned_skip=False,
                               earned_life=False, streak=0, multiplier=1.0):
@@ -435,10 +493,37 @@ def show_educational_debrief(level, status="win", points=0, earned_skip=False,
         color = "yellow"
         
     text = Text()
-    text.append(f"\n{w1}\n", style=f"bold {color}")
-    text.append(f"{d1}\n\n", style="italic")
-    text.append(f"{w2}\n", style=f"bold {color}")
+    
+    pos1 = level.get('pos1', 'Unknown')
+    text.append(f"\n{w1} ", style=f"bold {color}")
+    text.append(f"({pos1})\n", style="dim")
+    text.append(f"{d1}\n", style="italic")
+    if level.get('synonyms1'):
+        text.append(f"Synonyms: {', '.join(level['synonyms1'])}\n", style="dim")
+    if level.get('example1'):
+        text.append("  Example\n", style="bold white")
+        append_example_highlighted(text, level['example1'], w1)
+    if level.get('quote1'):
+        q = level['quote1']
+        text.append("  Quote\n", style="bold white")
+        append_example_highlighted(text, q['text'], w1, base_style="italic cyan")
+        text.append(f"    \u2014 {q['reference']}\n", style="dim cyan")
+    text.append("\n")
+    
+    pos2 = level.get('pos2', 'Unknown')
+    text.append(f"{w2} ", style=f"bold {color}")
+    text.append(f"({pos2})\n", style="dim")
     text.append(f"{d2}\n", style="italic")
+    if level.get('synonyms2'):
+        text.append(f"Synonyms: {', '.join(level['synonyms2'])}\n", style="dim")
+    if level.get('example2'):
+        text.append("  Example\n", style="bold white")
+        append_example_highlighted(text, level['example2'], w2)
+    if level.get('quote2'):
+        q = level['quote2']
+        text.append("  Quote\n", style="bold white")
+        append_example_highlighted(text, q['text'], w2, base_style="italic cyan")
+        text.append(f"    \u2014 {q['reference']}\n", style="dim cyan")
     
     panel = Panel(Align.center(text), title=title_text, border_style=color, box=box.DOUBLE)
     console.print(panel)
@@ -446,15 +531,15 @@ def show_educational_debrief(level, status="win", points=0, earned_skip=False,
     console.print(Align.center("\n[dim]Press ANY KEY to continue...[/dim]"))
     get_keypress()
 
-def show_tier_unlock(tier_name):
+def show_tier_mastered(tier_name):
     clear_screen()
     tier_color = DIFF_COLORS.get(tier_name, "cyan")
     
     text = Text(justify="center")
     text.append("\n\n")
-    text.append("✦ TIER UNLOCKED ✦\n", style=f"bold {tier_color}")
+    text.append("✦ TIER MASTERED ✦\n", style=f"bold {tier_color}")
     text.append(f"\n{tier_name.upper()}\n", style=f"bold white on {tier_color}")
-    text.append("\n\nYou've reached a new difficulty!\n", style="dim")
+    text.append("\n\nYou've mastered this difficulty!\n", style="dim")
     
     console.print(Panel(Align.center(text), border_style=tier_color, box=box.DOUBLE, padding=(1, 4)))
     time.sleep(0.2)
@@ -507,18 +592,18 @@ def show_game_over_summary(score, high_score, successful_guesses, total_played,
     console.print(Align.center("\n[dim]Play Again? (Y/N)[/dim]"))
 
 def shake_error(score, skips, lives, diff_name, progress, current_level, grid,
-                length, active_row, active_col, level, wins, streak):
+                length, active_row, active_col, level, wins, streak, hint_level=0):
     # Quick visual flicker to sell the wrong-answer sting
     for _ in range(3):
         clear_screen()
         console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                 grid, length, active_row, active_col,
-                                "[X] Incorrect!", "error", level, wins, streak))
+                                "[bold red]✗ Incorrect![/bold red]", "error", level, wins, streak, hint_level))
         time.sleep(0.07)
         clear_screen()
         console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                 grid, length, active_row, active_col,
-                                "", "neutral", level, wins, streak))
+                                "", "neutral", level, wins, streak, hint_level))
         time.sleep(0.05)
 
 
@@ -578,9 +663,9 @@ def play_game(levels, high_score=0):
                     console.print("[red]Error: No playable levels found. Exiting.[/red]")
                     sys.exit()
 
-            # Show tier unlock screen when the base difficulty advances
+            # Show tier mastered screen when the base difficulty advances
             if current_difficulty_idx > prev_difficulty_idx:
-                show_tier_unlock(diff_order[current_difficulty_idx])
+                show_tier_mastered(diff_order[prev_difficulty_idx])
             prev_difficulty_idx = current_difficulty_idx
 
             # Dynamic difficulty scaling selection
@@ -638,14 +723,14 @@ def play_game(levels, high_score=0):
             message = ""
             status = "neutral"
             game_over = False
-            hint_used = False
+            hint_level = 0
             hint_positions = set()  # tracks which (row, col) pairs were revealed by hint
             
             while True: 
                 clear_screen()
                 console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col, message, status,
-                                        total_levels_played + 1, successful_guesses, streak, hint_used))
+                                        total_levels_played + 1, successful_guesses, streak, hint_level))
                 
                 status = "neutral" 
                 
@@ -682,8 +767,16 @@ def play_game(levels, high_score=0):
                                 grid[active_row][active_col] = None
                                 grid[mirror_row][length - 1 - active_col] = None
 
-                elif cmd == '.' and not hint_used:
-                    # Reveal one random unfilled letter from row 1
+                elif cmd == '.' and hint_level < 2:
+                    if hint_level == 0:
+                        has_examples = bool(current_level.get('example1') or current_level.get('example2'))
+                        if has_examples:
+                            hint_level = 1
+                            message = "[dim]Example hints unlocked — round points halved.[/dim]"
+                            status = "neutral"
+                            continue
+
+                    # Reveal letter logic
                     empty_cols = [c for c in range(length) if grid[1][c] is None]
                     if empty_cols:
                         hc = random.choice(empty_cols)
@@ -691,8 +784,8 @@ def play_game(levels, high_score=0):
                         grid[2][length - 1 - hc] = word2[length - 1 - hc]
                         hint_positions.add((1, hc))
                         hint_positions.add((2, length - 1 - hc))
-                        hint_used = True
-                        message = "[dim]Hint used — round points halved.[/dim]"
+                        hint_level = 2
+                        message = "[dim]Letter revealed — round points halved again.[/dim]"
                     else:
                         message = "[dim]No empty cells to reveal.[/dim]"
                     status = "neutral"
@@ -705,7 +798,7 @@ def play_game(levels, high_score=0):
                         show_educational_debrief(current_level, "skip")
                         break 
                     else:
-                        message = "[!] No skips remaining!"
+                        message = "[bold red]⚠ No skips remaining![/bold red]"
                         status = "error"
                             
                 elif cmd == 'enter':
@@ -713,15 +806,15 @@ def play_game(levels, high_score=0):
                     current_w2 = "".join([c for c in grid[2] if c])
                     
                     if len(current_w1) < length:
-                        message = "[!] Please fill all letters before submitting!"
+                        message = "[bold red]⚠ Please fill all letters before submitting![/bold red]"
                         status = "error"
                     else:
                         if current_w1 == word1 and current_w2 == word2:
                             pts_base = {"Very Easy": 100, "Easy": 200, "Medium": 300,
                                         "Hard": 400, "Very Hard": 500, "Insane": 600}
                             base_pts = pts_base.get(diff_name, 100)
-                            if hint_used:
-                                base_pts = base_pts // 2
+                            if hint_level > 0:
+                                base_pts = base_pts // (2 ** hint_level)
                             
                             streak += 1
                             if streak > best_streak:
@@ -750,7 +843,7 @@ def play_game(levels, high_score=0):
                             console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                                     grid, length, active_row, active_col, "Correct!",
                                                     "success", total_levels_played, successful_guesses,
-                                                    streak, hint_used))
+                                                    streak, hint_level))
                             time.sleep(0.6)
                             
                             show_educational_debrief(current_level, "win", points_earned,
@@ -762,7 +855,7 @@ def play_game(levels, high_score=0):
                             
                             shake_error(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col,
-                                        total_levels_played + 1, successful_guesses, streak)
+                                        total_levels_played + 1, successful_guesses, streak, hint_level)
                             
                             if lives <= 0:
                                 total_levels_played += 1
@@ -790,7 +883,7 @@ def play_game(levels, high_score=0):
                                         return
                                 break
                             else:
-                                message = f"[X] Incorrect! You lost a heart."
+                                message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
                                 status = "error"
                                 
                 elif len(cmd) == 1 and cmd.isalpha():
