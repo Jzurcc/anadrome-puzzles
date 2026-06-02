@@ -298,6 +298,9 @@ def show_tutorial_screen():
         get_keypress()
 
 def get_streak_multiplier(streak):
+    if streak >= 50: return 10.0
+    if streak >= 30: return 5.0
+    if streak >= 20: return 4.0
     if streak >= 10: return 3.0
     if streak >= 5:  return 2.0
     if streak >= 3:  return 1.5
@@ -305,8 +308,11 @@ def get_streak_multiplier(streak):
 
 def get_streak_label(streak):
     mult = get_streak_multiplier(streak)
-    if streak >= 10: return f"[bold magenta]✦ STREAK x{streak} ({mult}x) ✦[/bold magenta]"
-    if streak >= 5:  return f"[bold red]✦ STREAK x{streak} ({mult}x)[/bold red]"
+    if streak >= 50: return f"[bold white on red]🔥 ULTIMATE STREAK x{streak} ({mult}x) 🔥[/bold white on red]"
+    if streak >= 30: return f"[bold magenta]✦ MEGA STREAK x{streak} ({mult}x) ✦[/bold magenta]"
+    if streak >= 20: return f"[bold blue]✦ ULTRA STREAK x{streak} ({mult}x) ✦[/bold blue]"
+    if streak >= 10: return f"[bold red]✦ STREAK x{streak} ({mult}x) ✦[/bold red]"
+    if streak >= 5:  return f"[bold dark_orange]✦ STREAK x{streak} ({mult}x)[/bold dark_orange]"
     if streak >= 3:  return f"[bold yellow]✦ STREAK x{streak} ({mult}x)[/bold yellow]"
     if streak >= 1:  return f"[cyan]Streak: {streak} ({mult}x)[/cyan]"
     return ""
