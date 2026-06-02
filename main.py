@@ -19,6 +19,16 @@ if hasattr(sys.stdout, 'reconfigure'):
 console = Console()
 USE_FIRST_DEFINITION = True
 
+# Difficulty tier color themes
+DIFF_COLORS = {
+    "Very Easy": "cyan",
+    "Easy":      "green",
+    "Medium":    "yellow",
+    "Hard":      "dark_orange",
+    "Very Hard": "red",
+    "Insane":    "magenta",
+}
+
 # Definition filtering and scoring system
 def score_definition(word, defn, tags, pos):
     word_lower = word.lower()
@@ -70,6 +80,34 @@ def sanitize_definition(defn, word):
     word_lower = word.lower()
     pattern = re.compile(r'\b' + re.escape(word_lower) + r'\b', re.IGNORECASE)
     return pattern.sub("[word]", defn)
+
+
+# High score persistence
+def get_save_path():
+    # Save next to the executable when packaged, or in the script dir during dev
+    if getattr(sys, 'frozen', False):
+        base = os.path.dirname(sys.executable)
+    else:
+        base = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base, "anadromes_save.json")
+
+def load_high_score():
+    path = get_save_path()
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data.get("high_score", 0)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return 0
+
+def save_high_score(score):
+    path = get_save_path()
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump({"high_score": score}, f)
+    except Exception:
+        pass
+
 
 # Data loading
 def load_game_data(csv_file, json_file):
@@ -188,12 +226,15 @@ def clear_screen():
 
 
 # UI rendering functions (using Rich)
-def show_title_screen():
+def show_title_screen(high_score=0):
     title_art = """[bold magenta]
-    _   _  _   _   ___   ___  ___  __  __ ___ ___ 
-   /_\\ | \\| | /_\\ |   \\ | _ \\/ _ \\|  \\/  | __/ __|
-  / _ \\| .` |/ _ \\| |) ||   / (_) | |\\/| | _|\\__ \\
- /_/ \\_\\_|\\_/_/ \\_\\___/ |_|_\\\\___/|_|  |_|___|___/
+
+░█████╗░███╗░░██╗░█████╗░██████╗░██████╗░░█████╗░███╗░░░███╗███████╗░██████╗
+██╔══██╗████╗░██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗████╗░████║██╔════╝██╔════╝
+███████║██╔██╗██║███████║██║░░██║██████╔╝██║░░██║██╔████╔██║█████╗░░╚█████╗░
+██╔══██║██║╚████║██╔══██║██║░░██║██╔══██╗██║░░██║██║╚██╔╝██║██╔══╝░░░╚═══██╗
+██║░░██║██║░╚███║██║░░██║██████╔╝██║░░██║╚█████╔╝██║░╚═╝░██║███████╗██████╔╝
+╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═════╝░
 [/bold magenta]"""
     
     options = ["Play", "Tutorial", "Exit"]
@@ -203,6 +244,10 @@ def show_title_screen():
         clear_screen()
         console.print(title_art, justify="center")
         console.print("\n")
+        
+        if high_score > 0:
+            console.print(f"[bold yellow]✦ Best Score: {high_score:,}[/bold yellow]", justify="center")
+            console.print("\n")
         
         for i, option in enumerate(options):
             if i == selected_index:
@@ -235,6 +280,8 @@ def show_tutorial_screen():
             "[bold yellow]Progression & Scoring:[/bold yellow]\n"
             "You start with 6 Skips (►) and 3 Lives (♥).\n"
             "Earn +1 Skip every 5 wins, and +1 Life every 10 wins.\n"
+            "Chain correct answers to build a Streak for bonus multipliers!\n"
+            "Press [H] to reveal a hint letter (costs 50% of round points).\n"
             "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
             "Harder difficulties award more points. Good luck!"
         )
@@ -250,13 +297,30 @@ def show_tutorial_screen():
         console.print(Panel(panel_text, title="[bold magenta]TUTORIAL[/bold magenta]", border_style="cyan"))
         get_keypress()
 
-def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, message, status="neutral", level=1, wins=0):
+def get_streak_multiplier(streak):
+    if streak >= 10: return 3.0
+    if streak >= 5:  return 2.0
+    if streak >= 3:  return 1.5
+    return 1.0
+
+def get_streak_label(streak):
+    if streak >= 10: return f"[bold magenta]✦ STREAK x{streak} — 3× MULTIPLIER! ✦[/bold magenta]"
+    if streak >= 5:  return f"[bold red]✦ STREAK x{streak} — 2× MULTIPLIER![/bold red]"
+    if streak >= 3:  return f"[bold yellow]✦ STREAK x{streak} — 1.5× MULTIPLIER![/bold yellow]"
+    if streak >= 1:  return f"[cyan]Streak: {streak}[/cyan]"
+    return ""
+
+def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length,
+              active_row, active_col, message, status="neutral", level=1, wins=0,
+              streak=0, hint_used=False):
     
-    # Header with Loss Aversion (Visual Health)
+    tier_color = DIFF_COLORS.get(diff_name, "cyan")
+    
+    # Header
     header_text = Text()
     header_text.append("=== ANADROME PUZZLES ===\n", style="bold magenta")
     header_text.append(f"♦ Score: ", style="bold")
-    header_text.append(f"{score}", style="cyan")
+    header_text.append(f"{score:,}", style="cyan")
     
     heart_str = "♥" * lives + "♡" * (3 - lives)
     skip_str = "►" * skips + "▹" * (6 - skips)
@@ -265,8 +329,11 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     header_text.append(heart_str)
     header_text.append("  |  Skips: ")
     header_text.append(skip_str)
-    header_text.append(f"\n✦ Tier: {diff_name} ({progress})  |  Level: {level}  |  Wins: {wins}", style="yellow")
-    header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="cyan")
+    
+    streak_label = get_streak_label(streak)
+    streak_suffix = f"  |  {streak_label}" if streak_label else ""
+    header_text.append(f"\n✦ Tier: {diff_name} ({progress})  |  Level: {level}  |  Wins: {wins}{streak_suffix}", style="yellow")
+    header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style=tier_color)
     
     # Hints Panel
     hints_text = Text()
@@ -279,14 +346,11 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     # Game Board
     board_text = Text()
     
-    # Determine styles based on status (Micro-interactions)
-    border_style = "white"
+    border_style = tier_color
     if status == "error":
         border_style = "bold red"
     elif status == "success":
         border_style = "bold green"
-    elif status == "checking":
-        border_style = "bold cyan"
         
     for r in [1, 2]:
         row_str = Text()
@@ -295,8 +359,10 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
             char = grid[r][c]
             display_char = char if char else "_"
             
+            # Mark hinted cells differently
+            is_hinted = hint_used and char is not None and grid[r][c] == char
+            
             if r == active_row and c == active_col:
-                # Pulsing cursor effect
                 if status == "neutral":
                     row_str.append(f"[ {display_char} ]", style="reverse bold cyan")
                 else:
@@ -308,16 +374,16 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         if r == 1:
             board_text.append("\n\n")
             
-    board_panel = Panel(Align.center(board_text), title="The Board", border_style=border_style, padding=(1, 2))
+    hint_title = "The Board" + ("  [dim][H used][/dim]" if hint_used else "  [dim][H] Hint[/dim]")
+    board_panel = Panel(Align.center(board_text), title=hint_title, border_style=border_style, padding=(1, 2))
     
-    # 4. Message / Controls
+    # Footer
     footer_text = Text()
     if message:
         footer_text.append(f"{message}\n", style=border_style)
-    footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [TAB] Skip | [ENTER] Submit | [ESC] Exit", style="dim")
+    footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [H] Hint | [TAB] Skip | [ENTER] Submit | [ESC] Exit", style="dim")
     footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
     
-    # Render all sequentially (works better across all terminals than Layout splits sometimes)
     return Align.center(
         Panel(
             Group(
@@ -330,8 +396,8 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         )
     )
 
-def show_educational_debrief(level, status="win", points=0, earned_skip=False, earned_life=False):
-    # Educational Debrief Panel: Shown after a round ends to explicitly teach the words.
+def show_educational_debrief(level, status="win", points=0, earned_skip=False,
+                              earned_life=False, streak=0, multiplier=1.0):
     clear_screen()
     
     w1, w2 = level["w1"], level["w2"]
@@ -340,11 +406,17 @@ def show_educational_debrief(level, status="win", points=0, earned_skip=False, e
     title_text = ""
     color = "white"
     if status == "win":
-        title_text = f"✦ CORRECT! +{points} Points ✦"
+        base_pts = int(points / multiplier)
+        if multiplier > 1.0:
+            title_text = f"✦ CORRECT! {base_pts} × {multiplier:.1f} = +{points} Points ✦"
+        else:
+            title_text = f"✦ CORRECT! +{points} Points ✦"
         if earned_life:
             title_text += " [ +1 ♥ ]"
         elif earned_skip:
             title_text += " [ +1 ► ]"
+        if streak >= 3:
+            title_text += f"  [ {streak} STREAK! ]"
         color = "green"
     elif status == "lose":
         title_text = "[X] OUT OF LIVES! The words were... [X]"
@@ -365,20 +437,95 @@ def show_educational_debrief(level, status="win", points=0, earned_skip=False, e
     console.print(Align.center("\n[dim]Press ANY KEY to continue...[/dim]"))
     get_keypress()
 
+def show_tier_unlock(tier_name):
+    clear_screen()
+    tier_color = DIFF_COLORS.get(tier_name, "cyan")
+    
+    text = Text(justify="center")
+    text.append("\n\n")
+    text.append("✦ TIER UNLOCKED ✦\n", style=f"bold {tier_color}")
+    text.append(f"\n{tier_name.upper()}\n", style=f"bold white on {tier_color}")
+    text.append("\n\nYou've reached a new difficulty!\n", style="dim")
+    
+    console.print(Panel(Align.center(text), border_style=tier_color, box=box.DOUBLE, padding=(1, 4)))
+    time.sleep(0.2)
+    console.print(Align.center(f"[dim]Press any key to continue...[/dim]"))
+    get_keypress()
+
+def show_game_over_summary(score, high_score, successful_guesses, total_played,
+                            best_streak, best_diff, diff_order):
+    clear_screen()
+    
+    accuracy = int((successful_guesses / total_played) * 100) if total_played > 0 else 0
+    
+    # Letter grade based on score and accuracy
+    if accuracy >= 90 and best_streak >= 10:
+        grade = "S"
+        grade_color = "bold magenta"
+    elif accuracy >= 75 and successful_guesses >= 20:
+        grade = "A"
+        grade_color = "bold green"
+    elif accuracy >= 60:
+        grade = "B"
+        grade_color = "bold yellow"
+    elif accuracy >= 40:
+        grade = "C"
+        grade_color = "bold dark_orange"
+    else:
+        grade = "D"
+        grade_color = "bold red"
+    
+    is_new_best = score > high_score
+    
+    text = Text(justify="center")
+    text.append("\n")
+    text.append(f"Grade: ", style="bold")
+    text.append(f"{grade}\n\n", style=grade_color)
+    
+    if is_new_best:
+        text.append("★ NEW HIGH SCORE! ★\n", style="bold yellow")
+    
+    text.append(f"Score:        {score:>8,}\n", style="cyan")
+    text.append(f"Best ever:    {max(score, high_score):>8,}\n", style="yellow")
+    text.append(f"Words solved: {successful_guesses:>8}\n")
+    text.append(f"Accuracy:     {accuracy:>7}%\n")
+    text.append(f"Best streak:  {best_streak:>8}\n")
+    text.append(f"Highest tier: {best_diff:>8}\n")
+    
+    title = "[bold red]GAME OVER[/bold red]"
+    border = "magenta" if is_new_best else "red"
+    console.print(Panel(Align.center(text), title=title, border_style=border, box=box.DOUBLE))
+    console.print(Align.center("\n[dim]Play Again? (Y/N)[/dim]"))
+
+def shake_error(score, skips, lives, diff_name, progress, current_level, grid,
+                length, active_row, active_col, level, wins, streak):
+    # Quick visual flicker to sell the wrong-answer sting
+    for _ in range(3):
+        clear_screen()
+        console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                grid, length, active_row, active_col,
+                                "[X] Incorrect!", "error", level, wins, streak))
+        time.sleep(0.07)
+        clear_screen()
+        console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                grid, length, active_row, active_col,
+                                "", "neutral", level, wins, streak))
+        time.sleep(0.05)
+
 
 # Main game loop
-def play_game(levels):
+def play_game(levels, high_score=0):
     if not levels:
         console.print("[red]No valid levels found to play. Exiting.[/red]")
         sys.exit()
         
     by_diff = {
         "Very Easy": [lvl for lvl in levels if lvl.get("difficulty") == "Very Easy"],
-        "Easy": [lvl for lvl in levels if lvl.get("difficulty") == "Easy"],
-        "Medium": [lvl for lvl in levels if lvl.get("difficulty") == "Medium"],
-        "Hard": [lvl for lvl in levels if lvl.get("difficulty") == "Hard"],
-        "Very Hard": [lvl for lvl in levels if lvl.get("difficulty") == "Very Hard"],
-        "Insane": [lvl for lvl in levels if lvl.get("difficulty") == "Insane"]
+        "Easy":      [lvl for lvl in levels if lvl.get("difficulty") == "Easy"],
+        "Medium":    [lvl for lvl in levels if lvl.get("difficulty") == "Medium"],
+        "Hard":      [lvl for lvl in levels if lvl.get("difficulty") == "Hard"],
+        "Very Hard":  [lvl for lvl in levels if lvl.get("difficulty") == "Very Hard"],
+        "Insane":    [lvl for lvl in levels if lvl.get("difficulty") == "Insane"],
     }
     diff_order = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard", "Insane"]
         
@@ -388,6 +535,9 @@ def play_game(levels):
         successful_guesses = 0
         total_levels_played = 0
         lives = 3
+        streak = 0
+        best_streak = 0
+        best_diff_idx = 0
         
         unplayed = {}
         for d in diff_order:
@@ -396,8 +546,9 @@ def play_game(levels):
             unplayed[d] = shuffled_list
             
         current_difficulty_idx = 0
+        prev_difficulty_idx = 0
 
-        while True: 
+        while True:
             # Ensure base difficulty tier contains unplayed words, recycling pools if all depleted
             attempts_diff = 0
             while attempts_diff < 6:
@@ -417,6 +568,11 @@ def play_game(levels):
                 if not unplayed[diff_name]:
                     console.print("[red]Error: No playable levels found. Exiting.[/red]")
                     sys.exit()
+
+            # Show tier unlock screen when the base difficulty advances
+            if current_difficulty_idx > prev_difficulty_idx:
+                show_tier_unlock(diff_order[current_difficulty_idx])
+            prev_difficulty_idx = current_difficulty_idx
 
             # Dynamic difficulty scaling selection
             level_num = total_levels_played + 1
@@ -454,6 +610,9 @@ def play_game(levels):
             chosen_diff_name = diff_order[chosen_diff_idx]
             current_level = unplayed[chosen_diff_name].pop(0)
             
+            if chosen_diff_idx > best_diff_idx:
+                best_diff_idx = chosen_diff_idx
+
             word1, word2 = current_level["w1"], current_level["w2"]
             length = len(word1)
             
@@ -470,11 +629,14 @@ def play_game(levels):
             message = ""
             status = "neutral"
             game_over = False
+            hint_used = False
+            hint_positions = set()  # tracks which (row, col) pairs were revealed by hint
             
             while True: 
                 clear_screen()
-                # Create and render the new UI
-                console.print(create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, message, status, total_levels_played + 1, successful_guesses))
+                console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                        grid, length, active_row, active_col, message, status,
+                                        total_levels_played + 1, successful_guesses, streak, hint_used))
                 
                 status = "neutral" 
                 
@@ -484,7 +646,7 @@ def play_game(levels):
                 
                 if cmd == '\x1b': 
                     clear_screen()
-                    console.print(f"[bold magenta]Thanks for playing! Final Score: {score}[/bold magenta]")
+                    console.print(f"[bold magenta]Thanks for playing! Final Score: {score:,}[/bold magenta]")
                     time.sleep(1.5)
                     return
                     
@@ -500,17 +662,36 @@ def play_game(levels):
                     
                 elif cmd == 'back':
                     if grid[active_row][active_col] is not None:
-                        grid[active_row][active_col] = None
-                        grid[mirror_row][length - 1 - active_col] = None
+                        # Don't erase hinted cells
+                        if (active_row, active_col) not in hint_positions:
+                            grid[active_row][active_col] = None
+                            grid[mirror_row][length - 1 - active_col] = None
                     else:
                         if active_col > 0:
                             active_col -= 1
-                            grid[active_row][active_col] = None
-                            grid[mirror_row][length - 1 - active_col] = None
-                            
+                            if (active_row, active_col) not in hint_positions:
+                                grid[active_row][active_col] = None
+                                grid[mirror_row][length - 1 - active_col] = None
+
+                elif cmd == 'h' and not hint_used:
+                    # Reveal one random unfilled letter from row 1
+                    empty_cols = [c for c in range(length) if grid[1][c] is None]
+                    if empty_cols:
+                        hc = random.choice(empty_cols)
+                        grid[1][hc] = word1[hc]
+                        grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                        hint_positions.add((1, hc))
+                        hint_positions.add((2, length - 1 - hc))
+                        hint_used = True
+                        message = "[dim]Hint used — round points halved.[/dim]"
+                    else:
+                        message = "[dim]No empty cells to reveal.[/dim]"
+                    status = "neutral"
+                        
                 elif cmd == 'tab':
                     if skips > 0:
                         skips -= 1
+                        streak = 0
                         total_levels_played += 1
                         show_educational_debrief(current_level, "skip")
                         break 
@@ -526,13 +707,19 @@ def play_game(levels):
                         message = "[!] Please fill all letters before submitting!"
                         status = "error"
                     else:
-                        clear_screen()
-                        console.print(create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, "Checking answers...", "checking", total_levels_played + 1, successful_guesses))
-                        time.sleep(0.3) 
-                        
                         if current_w1 == word1 and current_w2 == word2:
-                            pts = {"Very Easy": 100, "Easy": 200, "Medium": 300, "Hard": 400, "Very Hard": 500, "Insane": 600}
-                            points_earned = pts.get(diff_name, 100)
+                            pts_base = {"Very Easy": 100, "Easy": 200, "Medium": 300,
+                                        "Hard": 400, "Very Hard": 500, "Insane": 600}
+                            base_pts = pts_base.get(diff_name, 100)
+                            if hint_used:
+                                base_pts = base_pts // 2
+                            
+                            streak += 1
+                            if streak > best_streak:
+                                best_streak = streak
+                            
+                            multiplier = get_streak_multiplier(streak)
+                            points_earned = int(base_pts * multiplier)
                             score += points_earned
                             successful_guesses += 1
                             
@@ -549,21 +736,38 @@ def play_game(levels):
                                 lives += 1
                                 earned_life = True
                             
-                            # Reward feedback
+                            # Reward feedback flash
                             clear_screen()
-                            console.print(create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, "Correct!", "success", total_levels_played, successful_guesses))
+                            console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                                    grid, length, active_row, active_col, "Correct!",
+                                                    "success", total_levels_played, successful_guesses,
+                                                    streak, hint_used))
                             time.sleep(0.6)
                             
-                            show_educational_debrief(current_level, "win", points_earned, earned_skip, earned_life)
+                            show_educational_debrief(current_level, "win", points_earned,
+                                                     earned_skip, earned_life, streak, multiplier)
                             break 
                         else:
+                            streak = 0
                             lives -= 1
+                            
+                            shake_error(score, skips, lives, diff_name, progress, current_level,
+                                        grid, length, active_row, active_col,
+                                        total_levels_played + 1, successful_guesses, streak)
+                            
                             if lives <= 0:
                                 total_levels_played += 1
                                 show_educational_debrief(current_level, "lose")
                                 
-                                clear_screen()
-                                console.print(Panel(f"[bold red]GAME OVER[/bold red]\n\nFinal Score: {score}\nPlay Again? (Y/N)", border_style="red", expand=False))
+                                # Save high score before showing summary
+                                new_high = max(score, high_score)
+                                if score > high_score:
+                                    save_high_score(score)
+                                    high_score = score
+                                
+                                show_game_over_summary(score, high_score, successful_guesses,
+                                                       total_levels_played, best_streak,
+                                                       diff_order[best_diff_idx], diff_order)
                                 
                                 while True:
                                     retry = get_keypress()
@@ -572,7 +776,7 @@ def play_game(levels):
                                         break
                                     elif retry in ('n', '\x1b'):
                                         clear_screen()
-                                        console.print(f"[bold magenta]Thanks for playing! Final Score: {score}[/bold magenta]")
+                                        console.print(f"[bold magenta]Thanks for playing! Final Score: {score:,}[/bold magenta]")
                                         time.sleep(1.5)
                                         return
                                 break
@@ -582,8 +786,10 @@ def play_game(levels):
                                 
                 elif len(cmd) == 1 and cmd.isalpha():
                     char = cmd.upper()
-                    grid[active_row][active_col] = char
-                    grid[mirror_row][length - 1 - active_col] = char
+                    # Don't overwrite hinted cells
+                    if (active_row, active_col) not in hint_positions:
+                        grid[active_row][active_col] = char
+                        grid[mirror_row][length - 1 - active_col] = char
                     
                     if active_col < length - 1:
                         active_col += 1
@@ -595,7 +801,6 @@ def play_game(levels):
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
@@ -606,11 +811,14 @@ if __name__ == "__main__":
     JSON_FILE = resource_path('dictionary_pruned.json')  
     
     loaded_levels = load_game_data(CSV_FILE, JSON_FILE)
+    high_score = load_high_score()
     
     while True:
-        choice = show_title_screen()
+        choice = show_title_screen(high_score)
         if choice == "play":
-            play_game(loaded_levels)
+            play_game(loaded_levels, high_score)
+            # Reload in case it changed during play
+            high_score = load_high_score()
         elif choice == "tutorial":
             show_tutorial_screen()
         elif choice == "exit":
