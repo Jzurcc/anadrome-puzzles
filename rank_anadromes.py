@@ -19,7 +19,7 @@ def calculate_difficulty(w1, w2, wiki_ranks):
     w1_lower = w1.strip().lower()
     w2_lower = w2.strip().lower()
     
-    # 1-indexed rank, default to 100,000 if not found
+    # Default to 100,000 if not found
     r1 = wiki_ranks.get(w1_lower, 100000)
     r2 = wiki_ranks.get(w2_lower, 100000)
     
@@ -27,7 +27,7 @@ def calculate_difficulty(w1, w2, wiki_ranks):
     o1 = math.log10(max(1, r1)) / 5.0
     o2 = math.log10(max(1, r2)) / 5.0
     
-    # Combine obscurity (75% min, 25% max)
+    # Weighted combination (75% min, 25% max)
     o_min = min(o1, o2)
     o_max = max(o1, o2)
     o_pair = 0.75 * o_min + 0.25 * o_max
@@ -86,7 +86,7 @@ def main():
                     "Difficulty Class": diff_class
                 })
                 
-                # Check for not found words
+                # Track words not found in wiki ranks
                 w1_lower = w1.lower()
                 w2_lower = w2.lower()
                 if w1_lower not in wiki_ranks:
@@ -102,7 +102,7 @@ def main():
                         "Length": length
                     })
                 
-    # Sort pairs by Difficulty Score (ascending)
+    # Sort by difficulty score (ascending)
     ranked_pairs.sort(key=lambda x: x["Difficulty Score"])
     
     # Count distributions
@@ -120,7 +120,6 @@ def main():
         writer.writeheader()
         writer.writerows(ranked_pairs)
         
-    # Write not found words CSV
     print(f"Writing {len(not_found_words)} not found words to {not_found_file}...")
     with open(not_found_file, 'w', newline='', encoding='utf-8') as f:
         writer = csv.DictWriter(f, fieldnames=["Word", "Partner", "Length"])

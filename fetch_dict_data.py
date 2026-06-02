@@ -63,32 +63,29 @@ def fetch_all_dictionary_data(word_list):
             print(f"Network Error: {e}")
             master_dictionary[word] = {"error": "Network connection failed"}
             
-        # The safe 0.2s delay for freedictionaryapi.com
-        time.sleep(0.2) 
+        # Safe 0.2s delay for freedictionaryapi.com
+        time.sleep(0.2)
         
     return master_dictionary, missing_words_tracker
 
-# ==========================================
-# Execution Block
-# ==========================================
 if __name__ == "__main__":
-    # 1. Define your filenames
+    # Define filenames
     input_csv = 'anadromes_list_scowl_70.csv' 
     output_json = 'raw_dictionary_data_scowl70_2.json'
     missing_csv = 'missing_words_scowl70_2.csv' 
     
-    # 2. Load and sort the words
+    # Load and sort the words
     words_to_fetch = load_unique_words_from_csv(input_csv)
     
     if words_to_fetch:
-        # 3. Fire off the fetcher
+        # Fire off the fetcher
         final_data, words_not_found = fetch_all_dictionary_data(words_to_fetch)
         
-        # 4. Save the master JSON data
+        # Save the master JSON data
         with open(output_json, 'w', encoding='utf-8') as json_file:
             json.dump(final_data, json_file, indent=4)
             
-        # 5. Save the missing words to a CSV file (if there are any)
+        # Save the missing words to a CSV file (if there are any)
         if words_not_found:
             with open(missing_csv, 'w', newline='', encoding='utf-8') as csvfile:
                 writer = csv.writer(csvfile)
