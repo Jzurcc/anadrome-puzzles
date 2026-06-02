@@ -8,6 +8,9 @@ import re
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8') 
 
+# Global Configuration
+USE_FIRST_DEFINITION = True
+
 # ---------------------------------------------------------
 # Definition Filtering and Scoring System
 # ---------------------------------------------------------
@@ -101,8 +104,29 @@ def load_game_data(csv_file, json_file):
         if word_lower not in dict_data:
             return None
             
-        scored_senses = []
         entries = dict_data[word_lower].get("entries", [])
+        if not entries:
+            return None
+            
+        if USE_FIRST_DEFINITION:
+            first_defn = None
+            for entry in entries:
+                senses = entry.get("senses", [])
+                for sense in senses:
+                    defn = sense.get("definition", "")
+                    if defn:
+                        first_defn = defn
+                        break
+                if first_defn:
+                    break
+            
+            if not first_defn:
+                return None
+            
+            sanitized = sanitize_definition(first_defn, word_lower)
+            return sanitized
+            
+        scored_senses = []
         for entry in entries:
             pos = entry.get("partOfSpeech", "Unknown")
             senses = entry.get("senses", [])
@@ -239,8 +263,7 @@ def play_game(levels):
             unplayed[d] = shuffled_list
             
         current_difficulty_idx = 0
-        current_difficulty_count = 0
-        
+
         while True: # Middle Loop: Level Progression
             # Determine which difficulty to play (skip empty ones)
             attempts_diff = 0
@@ -250,7 +273,6 @@ def play_game(levels):
                     break
                 else:
                     current_difficulty_idx = (current_difficulty_idx + 1) % 6
-                    current_difficulty_count = 0
                     attempts_diff += 1
             
             if attempts_diff == 6:
@@ -271,8 +293,11 @@ def play_game(levels):
             word2 = current_level["w2"]
             length = len(word1)
             
-            # Display information
-            display_count = current_difficulty_count + 1
+            # Display information: how many levels remain in this tier
+            tier_total = len(by_diff[diff_name])
+            tier_remaining = len(unplayed[diff_name])  # already popped, so this is after current
+            tier_done = tier_total - tier_remaining     # includes the current level
+            display_count = tier_done
             
             grid = {1: [None] * length, 2: [None] * length}
             active_row = 1
@@ -285,8 +310,8 @@ def play_game(levels):
                 clear_screen()
                 print("=== ANADROME: THE GAME ===")
                 diff_label = diff_name.upper()
-                print(f"🏆 Score: {score}  |  ⏭️  Skips: {skips}/3  |  ❤️  Lives: {lives}/6")
-                print(f"🌟 Difficulty: {diff_label}  |  📊 Tier Progress: {display_count}/5")
+                print(f"🏆  Score: {score}  |  ⏭️  Skips: {skips}/6  |  ❤️  Lives: {lives}/6")
+                print(f"🌟 Difficulty: {diff_label}  |  📊 Tier Progress: {display_count}/{tier_total}")
                 print("-" * 60)
                 print(f"Hint 1: {current_level['d1']}")
                 print(f"Hint 2: {current_level['d2']}")
@@ -352,7 +377,7 @@ def play_game(levels):
                         print("=" * 60)
                         print("⏭️  LEVEL SKIPPED  ⏭️")
                         print(f"The words were: {word1} & {word2}")
-                        print(f"Skips remaining: {skips}/3")
+                        print(f"Skips remaining: {skips}/6")
                         print("=" * 60)
                         print("\nPress ANY KEY to continue to the next level...")
                         get_keypress()
@@ -381,7 +406,7 @@ def play_game(levels):
                         
                         skip_msg = ""
                         if successful_guesses % 3 == 0:
-                            if skips < 3:
+                            if skips < 6:
                                 skips += 1
                                 skip_msg = "\n🌟 AWESOME! You earned +1 Skip for 3 successful guesses! 🌟"
                             else:
@@ -434,10 +459,7 @@ def play_game(levels):
             if game_over:
                 break 
                 
-            current_difficulty_count += 1
-            if current_difficulty_count >= 5:
-                current_difficulty_idx = (current_difficulty_idx + 1) % 6
-                current_difficulty_count = 0 
+            # Tier advances automatically when the pool runs empty (handled at top of loop)
 
 # ==========================================
 # Execution Block
