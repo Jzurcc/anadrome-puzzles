@@ -91,22 +91,35 @@ def get_save_path():
         base = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base, "anadromes_save.json")
 
-def load_high_score():
+def load_high_scores():
     path = get_save_path()
     try:
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            return data.get("high_score", 0)
+            old_hs = data.get("high_score", 0)
+            compact_hs = data.get("compact_high_score", 0)
+            extensive_hs = data.get("extensive_high_score", old_hs)
+            return {"compact": compact_hs, "extensive": extensive_hs}
     except (FileNotFoundError, json.JSONDecodeError):
-        return 0
+        return {"compact": 0, "extensive": 0}
 
-def save_high_score(score):
+def load_high_score(mode="extensive"):
+    scores = load_high_scores()
+    return scores.get(mode, 0)
+
+def save_high_score(score, mode):
     path = get_save_path()
+    scores = load_high_scores()
+    scores[mode] = max(scores.get(mode, 0), score)
     try:
         with open(path, 'w', encoding='utf-8') as f:
-            json.dump({"high_score": score}, f)
+            json.dump({
+                "compact_high_score": scores["compact"],
+                "extensive_high_score": scores["extensive"]
+            }, f)
     except Exception:
         pass
+
 
 
 # Data loading
@@ -248,9 +261,8 @@ def clear_screen():
 
 
 # UI rendering functions (using Rich)
-def show_title_screen(high_score=0):
+def show_title_screen(compact_hs=0, extensive_hs=0):
     title_art = """[bold magenta]
-
 ░█████╗░███╗░░██╗░█████╗░██████╗░██████╗░░█████╗░███╗░░░███╗███████╗░██████╗
 ██╔══██╗████╗░██║██╔══██╗██╔══██╗██╔══██╗██╔══██╗████╗░████║██╔════╝██╔════╝
 ███████║██╔██╗██║███████║██║░░██║██████╔╝██║░░██║██╔████╔██║█████╗░░╚█████╗░
@@ -258,25 +270,50 @@ def show_title_screen(high_score=0):
 ██║░░██║██║░╚███║██║░░██║██████╔╝██║░░██║╚█████╔╝██║░╚═╝░██║███████╗██████╔╝
 ╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═════╝░
 [/bold magenta]"""
-    
+
     options = ["Play", "Tutorial", "Exit"]
     selected_index = 0
     
     while True:
         clear_screen()
-        console.print(title_art, justify="center")
-        console.print("\n")
         
-        if high_score > 0:
-            console.print(f"[bold yellow]✦ Best Score: {high_score:,}[/bold yellow]", justify="center")
-            console.print("\n")
+        header_text = Text.from_markup(title_art)
+        if compact_hs > 0 or extensive_hs > 0:
+            score_line = "\n"
+            if compact_hs > 0:
+                score_line += f"✦ Compact Best: {compact_hs:,} ✦"
+            if extensive_hs > 0:
+                if compact_hs > 0:
+                    score_line += "  |  "
+                score_line += f"✦ Extensive Best: {extensive_hs:,} ✦"
+            score_line += "\n"
+            header_text.append(score_line, style="bold yellow")
+        header_panel = Panel(Align.center(header_text), box=box.MINIMAL)
         
+        menu_text = Text()
+        menu_text.append("\n")
         for i, option in enumerate(options):
             if i == selected_index:
-                console.print(f"[bold cyan]> [ {option} ] <[/bold cyan]", justify="center")
+                menu_text.append(f"> [ {option.upper()} ] <\n", style="bold cyan")
             else:
-                console.print(f"[dim]  [ {option} ]  [/dim]", justify="center")
-                
+                menu_text.append(f"  [ {option.upper()} ]  \n", style="dim")
+        
+        menu_panel = Panel(Align.center(menu_text), title="Main Menu", border_style="magenta", padding=(1, 2))
+        
+        footer_text = Text("Use [UP/DOWN ARROWS] to select option and [ENTER] to confirm", style="dim")
+        footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+        
+        ui_panel = Panel(
+            Group(
+                header_panel,
+                menu_panel,
+                footer_panel
+            ),
+            box=box.MINIMAL
+        )
+        
+        console.print(Align.center(ui_panel))
+        
         cmd = get_keypress()
         if cmd == 'up':
             selected_index = (selected_index - 1) % len(options)
@@ -284,6 +321,61 @@ def show_title_screen(high_score=0):
             selected_index = (selected_index + 1) % len(options)
         elif cmd == 'enter':
             return options[selected_index].lower()
+
+def show_mode_select_screen(compact_hs=0, extensive_hs=0):
+    options = ["Compact", "Extensive"]
+    selected_index = 0
+    
+    while True:
+        clear_screen()
+        
+        header_text = Text("=== SELECT GAME MODE ===\n", style="bold magenta")
+        current_mode = options[selected_index].lower()
+        mode_hs = compact_hs if current_mode == "compact" else extensive_hs
+        if mode_hs > 0:
+            header_text.append(f"♦ {options[selected_index]} Best: {mode_hs:,}", style="bold yellow")
+        else:
+            header_text.append(f"♦ {options[selected_index]} Best: 0", style="dim")
+        header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="magenta")
+        
+        mode_text = Text()
+        mode_text.append("\n")
+        for i, option in enumerate(options):
+            if i == selected_index:
+                mode_text.append(f"> [ {option.upper()} ] <\n", style="bold cyan")
+            else:
+                mode_text.append(f"  [ {option.upper()} ]  \n", style="dim")
+        
+        mode_panel = Panel(Align.center(mode_text), title="Game Mode", border_style="cyan", padding=(1, 2))
+        
+        footer_text = Text()
+        if selected_index == 0:
+            footer_text.append("COMPACT MODE: Only play a set number of random puzzles per difficulty tier,\nthen advance to the next level. (Recommended game mode.)", style="yellow")
+        else:
+            footer_text.append("EXTENSIVE MODE: Exhaust all available puzzles in each difficulty tier\nbefore advancing, and ocassinally get harder puzzles (full challenge).", style="yellow")
+            
+        footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+        
+        ui_panel = Panel(
+            Group(
+                header_panel,
+                mode_panel,
+                footer_panel
+            ),
+            box=box.MINIMAL
+        )
+        
+        console.print(Align.center(ui_panel))
+        
+        cmd = get_keypress()
+        if cmd == 'up':
+            selected_index = (selected_index - 1) % len(options)
+        elif cmd == 'down':
+            selected_index = (selected_index + 1) % len(options)
+        elif cmd in ('enter', 'right'):
+            return options[selected_index].lower()
+        elif cmd in ('left', '\x1b'):
+            return "back"
 
 def show_tutorial_screen():
     segments = [
@@ -301,7 +393,7 @@ def show_tutorial_screen():
         (
             "[bold yellow]Progression & Scoring:[/bold yellow]\n"
             "You start with 6 Skips (►) and 3 Lives (♥).\n"
-            "Earn +1 Skip every 5 wins, and +1 Life every 10 wins.\n"
+            "Earn +1 Skip every 5 wins.\n"
             "Chain correct answers to build a Streak for bonus multipliers!\n"
             "Press [.] to reveal a hint letter (costs 50% of round points).\n"
             "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
@@ -389,7 +481,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         censored2 = re.sub(re.escape(current_level['w2']), "[word]", current_level['example2'], flags=re.IGNORECASE)
         hints_text.append(f"  Example: \"{censored2}\"\n", style="italic")
         
-    hints_panel = Panel(hints_text, title="Dictionary Definitions", border_style="blue")
+    hints_panel = Panel(hints_text, title="Dictionary Definitions", border_style=tier_color)
     
     # Game Board
     board_text = Text()
@@ -546,6 +638,20 @@ def show_tier_mastered(tier_name):
     console.print(Align.center(f"[dim]Press any key to continue...[/dim]"))
     get_keypress()
 
+def show_streak_lost(lost_streak):
+    clear_screen()
+    
+    text = Text(justify="center")
+    text.append("\n\n")
+    text.append("✗ STREAK LOST ✗\n", style="bold red")
+    text.append(f"\nYou lost your streak of {lost_streak}!\n", style="bold white")
+    text.append("\n\nHint: Press period (.) for useful hints!\n", style="dim")
+    
+    console.print(Panel(Align.center(text), border_style="red", box=box.DOUBLE, padding=(1, 4)))
+    time.sleep(0.2)
+    console.print(Align.center(f"[dim]Press any key to continue...[/dim]"))
+    get_keypress()
+
 def show_game_over_summary(score, high_score, successful_guesses, total_played,
                             best_streak, best_diff, diff_order):
     clear_screen()
@@ -608,7 +714,7 @@ def shake_error(score, skips, lives, diff_name, progress, current_level, grid,
 
 
 # Main game loop
-def play_game(levels, high_score=0):
+def play_game(levels, high_score=0, mode="extensive"):
     if not levels:
         console.print("[red]No valid levels found to play. Exiting.[/red]")
         sys.exit()
@@ -638,6 +744,18 @@ def play_game(levels, high_score=0):
             shuffled_list = list(by_diff[d])
             random.shuffle(shuffled_list)
             unplayed[d] = shuffled_list
+            
+        if mode == "compact":
+            limits = {
+                "Very Easy": 10,
+                "Easy": 20,
+                "Medium": 30,
+                "Hard": 40,
+                "Very Hard": 50,
+                "Insane": 39
+            }
+            for d in diff_order:
+                unplayed[d] = unplayed[d][:limits.get(d, 10)]
             
         current_difficulty_idx = 0
         prev_difficulty_idx = 0
@@ -672,7 +790,9 @@ def play_game(levels, high_score=0):
             level_num = total_levels_played + 1
             chosen_diff_idx = None
             
-            if level_num % 5 == 0:
+            if mode == "compact":
+                chosen_diff_idx = current_difficulty_idx
+            elif level_num % 5 == 0:
                 # Guaranteed next harder difficulty that has unfinished words
                 for idx in range(current_difficulty_idx + 1, len(diff_order)):
                     if unplayed[diff_order[idx]]:
@@ -711,6 +831,16 @@ def play_game(levels, high_score=0):
             length = len(word1)
             
             tier_total = len(by_diff[chosen_diff_name])
+            if mode == "compact":
+                limits = {
+                    "Very Easy": 10,
+                    "Easy": 20,
+                    "Medium": 30,
+                    "Hard": 40,
+                    "Very Hard": 50,
+                    "Insane": 39
+                }
+                tier_total = min(tier_total, limits.get(chosen_diff_name, tier_total))
             tier_done = tier_total - len(unplayed[chosen_diff_name])
             progress = f"{tier_done}/{tier_total}"
             
@@ -725,6 +855,7 @@ def play_game(levels, high_score=0):
             game_over = False
             hint_level = 0
             hint_positions = set()  # tracks which (row, col) pairs were revealed by hint
+            lost_streak_value = 0
             
             while True: 
                 clear_screen()
@@ -739,6 +870,8 @@ def play_game(levels, high_score=0):
                 mirror_row = 2 if active_row == 1 else 1
                 
                 if cmd == '\x1b': 
+                    if score > high_score:
+                        save_high_score(score, mode)
                     clear_screen()
                     console.print(f"[bold magenta]Thanks for playing! Final Score: {score:,}[/bold magenta]")
                     time.sleep(1.5)
@@ -772,7 +905,7 @@ def play_game(levels, high_score=0):
                         has_examples = bool(current_level.get('example1') or current_level.get('example2'))
                         if has_examples:
                             hint_level = 1
-                            message = "[dim]Example hints unlocked — round points halved.[/dim]"
+                            message = "[dim]Example hints unlocked: Round points halved.[/dim]"
                             status = "neutral"
                             continue
 
@@ -785,7 +918,7 @@ def play_game(levels, high_score=0):
                         hint_positions.add((1, hc))
                         hint_positions.add((2, length - 1 - hc))
                         hint_level = 2
-                        message = "[dim]Letter revealed — round points halved again.[/dim]"
+                        message = "[dim]Letter revealed: Round points halved.[/dim]"
                     else:
                         message = "[dim]No empty cells to reveal.[/dim]"
                     status = "neutral"
@@ -793,8 +926,11 @@ def play_game(levels, high_score=0):
                 elif cmd == 'tab':
                     if skips > 0:
                         skips -= 1
+                        lost_streak_value = streak
                         streak = 0
                         total_levels_played += 1
+                        if lost_streak_value > 0:
+                            show_streak_lost(lost_streak_value)
                         show_educational_debrief(current_level, "skip")
                         break 
                     else:
@@ -833,10 +969,6 @@ def play_game(levels, high_score=0):
                             if successful_guesses % 5 == 0 and skips < 6:
                                 skips += 1
                                 earned_skip = True
-                                
-                            if successful_guesses % 10 == 0 and lives < 3:
-                                lives += 1
-                                earned_life = True
                             
                             # Reward feedback flash
                             clear_screen()
@@ -846,10 +978,14 @@ def play_game(levels, high_score=0):
                                                     streak, hint_level))
                             time.sleep(0.6)
                             
+                            if lost_streak_value > 0:
+                                show_streak_lost(lost_streak_value)
                             show_educational_debrief(current_level, "win", points_earned,
                                                      earned_skip, earned_life, streak, multiplier)
                             break 
                         else:
+                            if streak > 0:
+                                lost_streak_value = streak
                             streak = 0
                             lives -= 1
                             
@@ -859,12 +995,14 @@ def play_game(levels, high_score=0):
                             
                             if lives <= 0:
                                 total_levels_played += 1
+                                if lost_streak_value > 0:
+                                    show_streak_lost(lost_streak_value)
                                 show_educational_debrief(current_level, "lose")
                                 
                                 # Save high score before showing summary
                                 new_high = max(score, high_score)
                                 if score > high_score:
-                                    save_high_score(score)
+                                    save_high_score(score, mode)
                                     high_score = score
                                 
                                 show_game_over_summary(score, high_score, successful_guesses,
@@ -880,7 +1018,7 @@ def play_game(levels, high_score=0):
                                         clear_screen()
                                         console.print(f"[bold magenta]Thanks for playing! Final Score: {score:,}[/bold magenta]")
                                         time.sleep(1.5)
-                                        return
+                                        sys.exit()
                                 break
                             else:
                                 message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
@@ -913,14 +1051,18 @@ if __name__ == "__main__":
     JSON_FILE = resource_path('dictionary_pruned.json')  
     
     loaded_levels = load_game_data(CSV_FILE, JSON_FILE)
-    high_score = load_high_score()
-    
     while True:
-        choice = show_title_screen(high_score)
+        scores = load_high_scores()
+        compact_hs = scores.get("compact", 0)
+        extensive_hs = scores.get("extensive", 0)
+        
+        choice = show_title_screen(compact_hs, extensive_hs)
         if choice == "play":
-            play_game(loaded_levels, high_score)
-            # Reload in case it changed during play
-            high_score = load_high_score()
+            mode = show_mode_select_screen(compact_hs, extensive_hs)
+            if mode == "back":
+                continue
+            active_hs = compact_hs if mode == "compact" else extensive_hs
+            play_game(loaded_levels, active_hs, mode)
         elif choice == "tutorial":
             show_tutorial_screen()
         elif choice == "exit":
