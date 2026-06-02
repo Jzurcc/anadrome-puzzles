@@ -331,8 +331,10 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     header_text.append(skip_str)
     
     streak_label = get_streak_label(streak)
-    streak_suffix = f"  |  {streak_label}" if streak_label else ""
-    header_text.append(f"\n✦ Tier: {diff_name} ({progress})  |  Level: {level}  |  Wins: {wins}{streak_suffix}", style="yellow")
+    header_text.append(f"\n✦ Tier: {diff_name} ({progress})  |  Level: {level}  |  Wins: {wins}", style="yellow")
+    if streak_label:
+        header_text.append("  |  ", style="yellow")
+        header_text.append(Text.from_markup(streak_label))
     header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style=tier_color)
     
     # Hints Panel
