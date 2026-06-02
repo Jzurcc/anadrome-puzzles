@@ -233,7 +233,7 @@ def show_tutorial_screen():
         ),
         (
             "[bold yellow]Progression & Scoring:[/bold yellow]\n"
-            "You start with 3 Skips (►) and 3 Lives (♥).\n"
+            "You start with 6 Skips (►) and 3 Lives (♥).\n"
             "Earn +1 Skip every 5 wins, and +1 Life every 10 wins.\n"
             "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
             "Harder difficulties award more points. Good luck!"
@@ -259,7 +259,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     header_text.append(f"{score}", style="cyan")
     
     heart_str = "♥" * lives + "♡" * (3 - lives)
-    skip_str = "►" * skips + "▹" * (3 - skips)
+    skip_str = "►" * skips + "▹" * (6 - skips)
     
     header_text.append("  |  Lives: ")
     header_text.append(heart_str)
@@ -384,7 +384,7 @@ def play_game(levels):
         
     while True: 
         score = 0
-        skips = 3
+        skips = 6
         successful_guesses = 0
         total_levels_played = 0
         lives = 3
@@ -541,7 +541,7 @@ def play_game(levels):
                             earned_skip = False
                             earned_life = False
                             
-                            if successful_guesses % 5 == 0 and skips < 3:
+                            if successful_guesses % 5 == 0 and skips < 6:
                                 skips += 1
                                 earned_skip = True
                                 
