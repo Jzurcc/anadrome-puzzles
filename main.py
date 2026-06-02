@@ -304,10 +304,11 @@ def get_streak_multiplier(streak):
     return 1.0
 
 def get_streak_label(streak):
-    if streak >= 10: return f"[bold magenta]✦ STREAK x{streak} — 3× MULTIPLIER! ✦[/bold magenta]"
-    if streak >= 5:  return f"[bold red]✦ STREAK x{streak} — 2× MULTIPLIER![/bold red]"
-    if streak >= 3:  return f"[bold yellow]✦ STREAK x{streak} — 1.5× MULTIPLIER![/bold yellow]"
-    if streak >= 1:  return f"[cyan]Streak: {streak}[/cyan]"
+    mult = get_streak_multiplier(streak)
+    if streak >= 10: return f"[bold magenta]✦ STREAK x{streak} ({mult}x) ✦[/bold magenta]"
+    if streak >= 5:  return f"[bold red]✦ STREAK x{streak} ({mult}x)[/bold red]"
+    if streak >= 3:  return f"[bold yellow]✦ STREAK x{streak} ({mult}x)[/bold yellow]"
+    if streak >= 1:  return f"[cyan]Streak: {streak} ({mult}x)[/cyan]"
     return ""
 
 def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length,
