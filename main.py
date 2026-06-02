@@ -19,9 +19,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 console = Console()
 USE_FIRST_DEFINITION = True
 
-# ---------------------------------------------------------
-# Definition Filtering and Scoring System
-# ---------------------------------------------------------
+# Definition filtering and scoring system
 def score_definition(word, defn, tags, pos):
     word_lower = word.lower()
     score = 100
@@ -73,9 +71,7 @@ def sanitize_definition(defn, word):
     pattern = re.compile(r'\b' + re.escape(word_lower) + r'\b', re.IGNORECASE)
     return pattern.sub("[word]", defn)
 
-# ---------------------------------------------------------
-# Data Loading
-# ---------------------------------------------------------
+# Data loading
 def load_game_data(csv_file, json_file):
     console.print(Panel("[bold cyan]Loading game data... Please wait.[/bold cyan]", border_style="cyan", expand=False))
     levels = []
@@ -137,9 +133,7 @@ def load_game_data(csv_file, json_file):
     time.sleep(1)
     return levels
 
-# ---------------------------------------------------------
-# OS-Specific Raw Keyboard Input Handling
-# ---------------------------------------------------------
+# OS-specific raw keyboard input handling
 try:
     import msvcrt
     is_windows = True
@@ -193,10 +187,7 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-# ---------------------------------------------------------
-# UI Rendering Functions (using Rich)
-# ---------------------------------------------------------
-
+# UI rendering functions (using Rich)
 def show_title_screen():
     title_art = """[bold magenta]
     _   _  _   _   ___   ___  ___  __  __ ___ ___ 
@@ -261,7 +252,7 @@ def show_tutorial_screen():
 
 def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, message, status="neutral", level=1, wins=0):
     
-    # 1. Header with Loss Aversion (Visual Health)
+    # Header with Loss Aversion (Visual Health)
     header_text = Text()
     header_text.append("=== ANADROME PUZZLES ===\n", style="bold magenta")
     header_text.append(f"♦ Score: ", style="bold")
@@ -277,7 +268,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     header_text.append(f"\n✦ Tier: {diff_name} ({progress})  |  Level: {level}  |  Wins: {wins}", style="yellow")
     header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="cyan")
     
-    # 2. Hints Panel
+    # Hints Panel
     hints_text = Text()
     hints_text.append("Row 1 Hint: ", style="bold green")
     hints_text.append(f"{current_level['d1']}\n\n")
@@ -285,7 +276,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     hints_text.append(f"{current_level['d2']}")
     hints_panel = Panel(hints_text, title="Dictionary Definitions", border_style="blue")
     
-    # 3. Game Board
+    # Game Board
     board_text = Text()
     
     # Determine styles based on status (Micro-interactions)
@@ -340,10 +331,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     )
 
 def show_educational_debrief(level, status="win", points=0, earned_skip=False, earned_life=False):
-    """
-    Educational Debrief Panel: Shown after a round ends to explicitly teach the words.
-    Uses emotional arc principles (rewarding clarity after tension).
-    """
+    # Educational Debrief Panel: Shown after a round ends to explicitly teach the words.
     clear_screen()
     
     w1, w2 = level["w1"], level["w2"]
@@ -377,9 +365,8 @@ def show_educational_debrief(level, status="win", points=0, earned_skip=False, e
     console.print(Align.center("\n[dim]Press ANY KEY to continue...[/dim]"))
     get_keypress()
 
-# ---------------------------------------------------------
-# Main Game Loop
-# ---------------------------------------------------------
+
+# Main game loop
 def play_game(levels):
     if not levels:
         console.print("[red]No valid levels found to play. Exiting.[/red]")
@@ -450,7 +437,6 @@ def play_game(levels):
                 # Create and render the new UI
                 console.print(create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, message, status, total_levels_played + 1, successful_guesses))
                 
-                # Reset status back to neutral after one render tick (e.g. after error flash)
                 status = "neutral" 
                 
                 cmd = get_keypress()
@@ -501,10 +487,9 @@ def play_game(levels):
                         message = "[!] Please fill all letters before submitting!"
                         status = "error"
                     else:
-                        # Design Spell: Anticipation Micro-interaction
                         clear_screen()
                         console.print(create_ui(score, skips, lives, diff_name, progress, current_level, grid, length, active_row, active_col, "Checking answers...", "checking", total_levels_played + 1, successful_guesses))
-                        time.sleep(0.3) # Tension pause
+                        time.sleep(0.3) 
                         
                         if current_w1 == word1 and current_w2 == word2:
                             pts = {"Very Easy": 100, "Easy": 200, "Medium": 300, "Hard": 400, "Very Hard": 500, "Insane": 600}
@@ -568,12 +553,18 @@ def play_game(levels):
                 break 
 
 
-# ==========================================
-# Execution Block
-# ==========================================
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 if __name__ == "__main__":
-    CSV_FILE = 'anadromes_ranked.csv'
-    JSON_FILE = 'dictionary_pruned.json'  
+    CSV_FILE = resource_path('anadromes_ranked_clean.csv')
+    JSON_FILE = resource_path('dictionary_pruned.json')  
     
     loaded_levels = load_game_data(CSV_FILE, JSON_FILE)
     
