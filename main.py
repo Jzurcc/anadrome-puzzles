@@ -5,6 +5,7 @@ import json
 import csv
 import re
 import time
+import shutil
 
 from rich.console import Console, Group
 from rich.panel import Panel
@@ -28,6 +29,38 @@ DIFF_COLORS = {
     "Very Hard": "red",
     "Insane":    "magenta",
 }
+
+# Level-select group configuration
+GROUP_SIZE = 20
+
+GROUP_NAMES = [
+    "Dawn",    "Tide",    "Grove",   "Breeze",  "Mosaic",
+    "Wander",  "Mist",    "Gloam",   "Tangle",  "Veil",
+    "Hollow",  "Thorn",   "Cipher",  "Dusk",    "Marrow",
+    "Abyss",   "Rune",    "Hex",     "Enigma",
+]
+
+GROUP_COLORS = [
+    "bright_cyan",   # Dawn
+    "cyan",          # Tide
+    "bright_green",  # Grove
+    "green",         # Breeze
+    "chartreuse3",   # Mosaic
+    "yellow",        # Wander
+    "gold1",         # Mist
+    "dark_orange",   # Gloam
+    "orange_red1",   # Tangle
+    "red",           # Veil
+    "bright_red",    # Hollow
+    "dark_red",      # Thorn
+    "magenta",       # Cipher
+    "medium_purple1",# Dusk
+    "purple",        # Marrow
+    "blue_violet",   # Abyss
+    "dark_blue",     # Rune
+    "grey50",        # Hex
+    "white",         # Enigma
+]
 
 # Definition filtering and scoring system
 def score_definition(word, defn, tags, pos):
@@ -99,9 +132,11 @@ def load_high_scores():
             old_hs = data.get("high_score", 0)
             compact_hs = data.get("compact_high_score", 0)
             extensive_hs = data.get("extensive_high_score", old_hs)
-            return {"compact": compact_hs, "extensive": extensive_hs}
+            level_progress = data.get("level_progress", {})
+            unlocked_words = data.get("unlocked_words", [])
+            return {"compact": compact_hs, "extensive": extensive_hs, "level_progress": level_progress, "unlocked_words": unlocked_words}
     except (FileNotFoundError, json.JSONDecodeError):
-        return {"compact": 0, "extensive": 0}
+        return {"compact": 0, "extensive": 0, "level_progress": {}, "unlocked_words": []}
 
 def load_high_score(mode="extensive"):
     scores = load_high_scores()
@@ -115,7 +150,48 @@ def save_high_score(score, mode):
         with open(path, 'w', encoding='utf-8') as f:
             json.dump({
                 "compact_high_score": scores["compact"],
-                "extensive_high_score": scores["extensive"]
+                "extensive_high_score": scores["extensive"],
+                "level_progress": scores["level_progress"],
+                "unlocked_words": scores["unlocked_words"]
+            }, f)
+    except Exception:
+        pass
+
+def save_level_progress(level_progress):
+    path = get_save_path()
+    scores = load_high_scores()
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump({
+                "compact_high_score": scores["compact"],
+                "extensive_high_score": scores["extensive"],
+                "level_progress": level_progress,
+                "unlocked_words": scores["unlocked_words"]
+            }, f)
+    except Exception:
+        pass
+
+def save_unlocked_words(w1, w2):
+    path = get_save_path()
+    scores = load_high_scores()
+    unlocked = set(scores.get("unlocked_words", []))
+    w1_low = w1.lower()
+    w2_low = w2.lower()
+    
+    if w1_low in unlocked and w2_low in unlocked:
+        return
+        
+    unlocked.add(w1_low)
+    unlocked.add(w2_low)
+    scores["unlocked_words"] = list(unlocked)
+    
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump({
+                "compact_high_score": scores["compact"],
+                "extensive_high_score": scores["extensive"],
+                "level_progress": scores["level_progress"],
+                "unlocked_words": scores["unlocked_words"]
             }, f)
     except Exception:
         pass
@@ -206,6 +282,18 @@ def load_game_data(csv_file, json_file):
     time.sleep(1)
     return levels
 
+def load_groups(csv_file, json_file):
+    console.print(Panel("[bold cyan]Loading level groups... Please wait.[/bold cyan]", border_style="cyan", expand=False))
+    
+    # We can reuse load_game_data to get the full list (it keeps row order, which is our difficulty sort)
+    levels = load_game_data(csv_file, json_file)
+    
+    groups = []
+    for i in range(0, len(levels), GROUP_SIZE):
+        groups.append(levels[i:i + GROUP_SIZE])
+    
+    return groups
+
 # OS-specific raw keyboard input handling
 try:
     import msvcrt
@@ -271,7 +359,7 @@ def show_title_screen(compact_hs=0, extensive_hs=0):
 ╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝╚═════╝░╚═╝░░╚═╝░╚════╝░╚═╝░░░░░╚═╝╚══════╝╚═════╝░
 [/bold magenta]"""
 
-    options = ["Play", "Tutorial", "Exit"]
+    options = ["Play", "Arcade", "Tutorial", "Compendium", "Exit"]
     selected_index = 0
     
     while True:
@@ -377,6 +465,126 @@ def show_mode_select_screen(compact_hs=0, extensive_hs=0):
         elif cmd in ('left', '\x1b'):
             return "back"
 
+def show_level_select_screen(groups, level_progress):
+    selected = 0
+    num_groups = len(groups)
+    
+    while True:
+        term_width = shutil.get_terminal_size((80, 24)).columns
+        box_width = 17 # 14 for box + 3 for spacing
+        cols = max(1, (term_width - 8) // box_width)
+        cols = min(cols, num_groups) # don't make more cols than groups
+        
+        clear_screen()
+        
+        header_text = Text("✦ SELECT YOUR CHAPTER ✦", style="bold magenta")
+        header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="magenta", padding=(1, 2))
+        
+        grid_text = Text()
+        grid_text.append("\n")
+        
+        # Build rows of 3
+        for r in range(0, num_groups, cols):
+            # Row arrays
+            names, fractions, box_styles = [], [], []
+            for c in range(cols):
+                idx = r + c
+                if idx < num_groups:
+                    name = GROUP_NAMES[idx]
+                    grp_color = GROUP_COLORS[idx]
+                    total = len(groups[idx])
+                    prog = level_progress.get(str(idx), 0)
+                    
+                    if prog >= total:
+                        frac_str = f" ✓ {total}/{total} "
+                    else:
+                        frac_str = f"   {prog}/{total}   "
+                        
+                    is_sel = (idx == selected)
+                    if is_sel:
+                        box_styles.append("bold white")
+                    else:
+                        box_styles.append(grp_color)
+                        
+                    names.append(name.center(12))
+                    fractions.append(frac_str.center(12))
+                else:
+                    names.append(" " * 12)
+                    fractions.append(" " * 12)
+                    box_styles.append("dim")
+            
+            # Construct ASCII boxes
+            top_line = ""
+            mid_name = ""
+            mid_empty = ""
+            mid_frac = ""
+            bot_line = ""
+            
+            for c in range(cols):
+                idx = r + c
+                if idx < num_groups:
+                    style = box_styles[c]
+                    sel_flag = (idx == selected)
+                    
+                    # Top
+                    top_line += f"[{style}]┌────────────┐[/{style}]   "
+                    
+                    # Name row (bold white text if selected, else dimmed color)
+                    name_fmt = f"[bold white]{names[c]}[/bold white]" if sel_flag else f"[{style}]{names[c]}[/{style}]"
+                    mid_name += f"[{style}]│[/{style}]{name_fmt}[{style}]│[/{style}]   "
+                    
+                    # Empty row
+                    mid_empty += f"[{style}]│            │[/{style}]   "
+                    
+                    # Fraction row
+                    frac_fmt = f"[bold white]{fractions[c]}[/bold white]" if sel_flag else f"[{style}]{fractions[c]}[/{style}]"
+                    mid_frac += f"[{style}]│[/{style}]{frac_fmt}[{style}]│[/{style}]   "
+                    
+                    # Bottom
+                    bot_line += f"[{style}]└────────────┘[/{style}]   "
+                else:
+                    pad = "               "
+                    top_line += pad
+                    mid_name += pad
+                    mid_empty += pad
+                    mid_frac += pad
+                    bot_line += pad
+            
+            grid_text.append(top_line + "\n")
+            grid_text.append(mid_name + "\n")
+            grid_text.append(mid_empty + "\n")
+            grid_text.append(mid_frac + "\n")
+            grid_text.append(bot_line + "\n\n")
+            
+        grid_panel = Panel(Align.center(Text.from_markup(str(grid_text))), border_style="cyan", padding=(0, 2))
+        
+        footer_text = Text("[ARROWS] Navigate   [ENTER] Play Chapter   [ESC] Back to Menu", style="dim")
+        footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+        
+        ui_panel = Panel(Group(header_panel, grid_panel, footer_panel), box=box.MINIMAL)
+        console.print(Align.center(ui_panel))
+        
+        cmd = get_keypress()
+        if cmd == 'up':
+            if selected >= cols:
+                selected -= cols
+        elif cmd == 'down':
+            if selected + cols < num_groups:
+                selected += cols
+            else:
+                # jump to last item if going down from last row
+                selected = num_groups - 1
+        elif cmd == 'left':
+            if selected % cols > 0:
+                selected -= 1
+        elif cmd == 'right':
+            if selected % cols < cols - 1 and selected + 1 < num_groups:
+                selected += 1
+        elif cmd == 'enter':
+            return selected
+        elif cmd == '\x1b':
+            return None
+
 def show_tutorial_screen():
     segments = [
         (
@@ -391,13 +599,18 @@ def show_tutorial_screen():
             "Its anadrome will automatically be typed in Row 2."
         ),
         (
-            "[bold yellow]Progression & Scoring:[/bold yellow]\n"
-            "You start with 6 Skips (►) and 3 Lives (♥).\n"
-            "Earn +1 Skip every 5 wins.\n"
-            "Chain correct answers to build a Streak for bonus multipliers!\n"
-            "Press [.] to reveal a hint letter (costs 50% of round points).\n"
-            "Difficulties range from [green]Very Easy[/green] to [bold red]Insane[/bold red].\n"
-            "Harder difficulties award more points. Good luck!"
+            "[bold cyan]Main Game - Chapters:[/bold cyan]\n"
+            "Progress through a curated set of Word Galleries.\n"
+            "You have [bold red]6 Lives (♥)[/bold red] per puzzle.\n"
+            "Press [bold yellow][.][/bold yellow] to reveal hints if you get stuck. It's free."
+        ),
+        (
+            "[bold yellow]Arcade Mode:[/bold yellow]\n"
+            "A high-score survival mode where you only have [bold red]3 Lives (♥)[/bold red].\n"
+            "• Build [bold magenta]Streaks[/bold magenta] for huge bonus multipliers.\n"
+            "• Earn [bold cyan]Skips (►)[/bold cyan] every 5 correct answers.\n"
+            "• Hints cost 50% of your round points.\n"
+            "Compete to set the highest score in Compact or Extensive mode!"
         )
     ]
     
@@ -410,6 +623,142 @@ def show_tutorial_screen():
             
         console.print(Panel(panel_text, title="[bold magenta]TUTORIAL[/bold magenta]", border_style="cyan"))
         get_keypress()
+
+def show_dictionary_entry(word_data, is_reversed):
+    while True:
+        clear_screen()
+        
+        word_to_show = word_data['w2'] if is_reversed else word_data['w1']
+        def_to_show = word_data['d2'] if is_reversed else word_data['d1']
+        
+        pos_key = 'pos2' if is_reversed else 'pos1'
+        syn_key = 'synonyms2' if is_reversed else 'synonyms1'
+        ex_key = 'example2' if is_reversed else 'example1'
+        quote_key = 'quote2' if is_reversed else 'quote1'
+        
+        hints_text = Text()
+        hints_text.append(f"{word_to_show.upper()}\n\n", style="bold cyan")
+        
+        if word_data.get(pos_key):
+            hints_text.append(f"Part of Speech: {word_data[pos_key]}\n", style="italic")
+        
+        hints_text.append(f"Definition: ", style="bold yellow")
+        hints_text.append(f"{def_to_show}\n")
+        
+        if word_data.get(syn_key):
+            hints_text.append(f"Synonyms: {', '.join(word_data[syn_key])}\n", style="dim")
+            
+        if word_data.get(ex_key):
+            hints_text.append("\n  Example\n", style="bold white")
+            append_example_highlighted(hints_text, word_data[ex_key], word_to_show, "italic yellow")
+            
+        if word_data.get(quote_key):
+            q = word_data[quote_key]
+            hints_text.append("\n  Quote\n", style="bold white")
+            append_example_highlighted(hints_text, q['text'], word_to_show, base_style="italic yellow")
+            hints_text.append(f"    — {q['reference']}\n", style="dim yellow")
+            
+        hints_panel = Panel(hints_text, title="Dictionary Entry", border_style="cyan", padding=(1, 2))
+        
+        footer_text = Text("Press [TAB] to flip to reversed word | [ESC] or [ENTER] to return", style="dim")
+        footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+        
+        ui_panel = Panel(Group(hints_panel, footer_panel), box=box.MINIMAL)
+        console.print(Align.center(ui_panel))
+        
+        cmd = get_keypress()
+        if cmd == 'tab':
+            is_reversed = not is_reversed
+        elif cmd in ('\x1b', 'enter', 'back'):
+            break
+
+def show_compendium_screen(all_groups, unlocked_words_set):
+    compendium_list = []
+    for group in all_groups:
+        for lvl in group:
+            compendium_list.append({
+                "word": lvl["w1"].lower(),
+                "is_reversed": False,
+                "data": lvl
+            })
+            compendium_list.append({
+                "word": lvl["w2"].lower(),
+                "is_reversed": True,
+                "data": lvl
+            })
+    
+    selected_idx = 0
+    num_items = len(compendium_list)
+    cols = 2
+    
+    while True:
+        term_height = shutil.get_terminal_size((80, 24)).lines
+        list_height = max(5, min(10, term_height - 12)) # max 10 rows
+        
+        current_row = selected_idx // cols
+        page_start_row = max(0, current_row - (list_height // 2))
+        
+        total_rows = (num_items + cols - 1) // cols
+        page_end_row = min(total_rows, page_start_row + list_height)
+        
+        if page_end_row - page_start_row < list_height:
+            page_start_row = max(0, page_end_row - list_height)
+            
+        clear_screen()
+        
+        header_text = Text("=== COMPENDIUM ===\n", style="bold magenta")
+        header_text.append(f"Unlocked: {len(unlocked_words_set)} / {num_items}", style="cyan")
+        header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="magenta")
+        
+        list_table = Table.grid(expand=True, padding=(0, 2))
+        list_table.add_column(ratio=1, justify="center")
+        list_table.add_column(ratio=1, justify="center")
+        
+        for r in range(page_start_row, page_end_row):
+            row_cells = []
+            for c in range(cols):
+                i = r * cols + c
+                if i < num_items:
+                    item = compendium_list[i]
+                    is_unlocked = item["word"] in unlocked_words_set
+                    display_word = item["word"].upper() if is_unlocked else " ".join(["?"] * len(item["word"]))
+                    
+                    if i == selected_idx:
+                        cell_text = Text(f"> [ {display_word} ] <", style="bold cyan")
+                    else:
+                        cell_text = Text(f"  [ {display_word} ]  ", style="dim" if not is_unlocked else "white")
+                    row_cells.append(cell_text)
+                else:
+                    row_cells.append(Text(""))
+            list_table.add_row(*row_cells)
+                
+        list_panel = Panel(list_table, title="All Words", border_style="cyan", padding=(1, 2))
+        
+        footer_text = Text("Use [ARROWS] to navigate | [ENTER] to view | [ESC] to return", style="dim")
+        footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+        
+        ui_panel = Panel(Group(header_panel, list_panel, footer_panel), box=box.MINIMAL)
+        console.print(Align.center(ui_panel))
+        
+        cmd = get_keypress()
+        if cmd == 'up':
+            if selected_idx >= cols:
+                selected_idx -= cols
+        elif cmd == 'down':
+            if selected_idx + cols < num_items:
+                selected_idx += cols
+        elif cmd == 'left':
+            if selected_idx % cols > 0:
+                selected_idx -= 1
+        elif cmd == 'right':
+            if selected_idx % cols < cols - 1 and selected_idx + 1 < num_items:
+                selected_idx += 1
+        elif cmd == 'enter':
+            item = compendium_list[selected_idx]
+            if item["word"] in unlocked_words_set:
+                show_dictionary_entry(item["data"], item["is_reversed"])
+        elif cmd in ('\x1b', 'back'):
+            break
 
 def get_streak_multiplier(streak):
     if streak >= 50: return 10.0
@@ -433,7 +782,7 @@ def get_streak_label(streak):
 
 def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length,
               active_row, active_col, message, status="neutral", level=1, wins=0,
-              streak=0, hint_level=0):
+              streak=0, hint_level=0, show_debrief=False, manual_letters=0):
     
     tier_color = DIFF_COLORS.get(diff_name, "cyan")
     
@@ -460,26 +809,57 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
     
     # Hints Panel
     hints_text = Text()
+    w1, w2 = current_level['w1'], current_level['w2']
     
     pos1 = current_level.get('pos1', 'Unknown')
-    hints_text.append(f"Row 1 Hint ({pos1}): ", style="bold green")
-    hints_text.append(f"{current_level['d1']}\n")
-    if current_level.get('synonyms1'):
-        hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms1'])}\n", style="dim")
-    if hint_level >= 1 and current_level.get('example1'):
-        censored1 = re.sub(re.escape(current_level['w1']), "[word]", current_level['example1'], flags=re.IGNORECASE)
-        hints_text.append(f"  Example: \"{censored1}\"\n", style="italic")
-        
+    if show_debrief:
+        hints_text.append(f"{w1.upper()} ", style="bold green")
+        hints_text.append(f"({pos1})\n", style="dim")
+        hints_text.append(f"{current_level['d1']}\n", style="italic")
+        if current_level.get('synonyms1'):
+            hints_text.append(f"Synonyms: {', '.join(current_level['synonyms1'])}\n", style="dim")
+        if current_level.get('example1'):
+            hints_text.append("  Example\n", style="bold white")
+            append_example_highlighted(hints_text, current_level['example1'], w1, "italic green")
+        if current_level.get('quote1'):
+            q = current_level['quote1']
+            hints_text.append("  Quote\n", style="bold white")
+            append_example_highlighted(hints_text, q['text'], w1, base_style="italic green")
+            hints_text.append(f"    — {q['reference']}\n", style="dim green")
+    else:
+        hints_text.append(f"Row 1 Hint ({pos1}): ", style="bold green")
+        hints_text.append(f"{current_level['d1']}\n")
+        if current_level.get('synonyms1'):
+            hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms1'])}\n", style="dim")
+        if hint_level >= 1 and current_level.get('example1'):
+            censored1 = re.sub(re.escape(w1), "[word]", current_level['example1'], flags=re.IGNORECASE)
+            hints_text.append(f"  Example: \"{censored1}\"\n", style="italic")
+            
     hints_text.append("\n")
     
     pos2 = current_level.get('pos2', 'Unknown')
-    hints_text.append(f"Row 2 Hint ({pos2}): ", style="bold yellow")
-    hints_text.append(f"{current_level['d2']}\n")
-    if current_level.get('synonyms2'):
-        hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms2'])}\n", style="dim")
-    if hint_level >= 1 and current_level.get('example2'):
-        censored2 = re.sub(re.escape(current_level['w2']), "[word]", current_level['example2'], flags=re.IGNORECASE)
-        hints_text.append(f"  Example: \"{censored2}\"\n", style="italic")
+    if show_debrief:
+        hints_text.append(f"{w2.upper()} ", style="bold yellow")
+        hints_text.append(f"({pos2})\n", style="dim")
+        hints_text.append(f"{current_level['d2']}\n", style="italic")
+        if current_level.get('synonyms2'):
+            hints_text.append(f"Synonyms: {', '.join(current_level['synonyms2'])}\n", style="dim")
+        if current_level.get('example2'):
+            hints_text.append("  Example\n", style="bold white")
+            append_example_highlighted(hints_text, current_level['example2'], w2, "italic yellow")
+        if current_level.get('quote2'):
+            q = current_level['quote2']
+            hints_text.append("  Quote\n", style="bold white")
+            append_example_highlighted(hints_text, q['text'], w2, base_style="italic yellow")
+            hints_text.append(f"    — {q['reference']}\n", style="dim yellow")
+    else:
+        hints_text.append(f"Row 2 Hint ({pos2}): ", style="bold yellow")
+        hints_text.append(f"{current_level['d2']}\n")
+        if current_level.get('synonyms2'):
+            hints_text.append(f"  Synonyms: {', '.join(current_level['synonyms2'])}\n", style="dim")
+        if hint_level >= 1 and current_level.get('example2'):
+            censored2 = re.sub(re.escape(w2), "[word]", current_level['example2'], flags=re.IGNORECASE)
+            hints_text.append(f"  Example: \"{censored2}\"\n", style="italic")
         
     hints_panel = Panel(hints_text, title="Dictionary Definitions", border_style=tier_color)
     
@@ -514,10 +894,11 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         if r == 1:
             board_text.append("\n\n")
             
-    if hint_level == 0:
-        hint_state = "  [dim][.] Hint[/dim]"
-    elif hint_level == 1:
-        hint_state = "  [dim][.] Extra Hint[/dim]"
+    if manual_letters < 2:
+        if hint_level == 0:
+            hint_state = "  [dim][.] Hint[/dim]"
+        else:
+            hint_state = "  [dim][.] Extra Hint[/dim]"
     else:
         hint_state = "  [dim][Max Hints Used][/dim]"
         
@@ -543,6 +924,136 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
         )
     )
 
+from rich.columns import Columns
+from rich.table import Table
+
+def create_campaign_ui(group, group_idx, current_idx, grid, length, active_row, active_col, message, status, hint_level, lives, show_debrief=False, manual_letters=0):
+    group_name = GROUP_NAMES[group_idx]
+    tier_color = GROUP_COLORS[group_idx]
+    
+    header_text = Text()
+    header_text.append(f"✦ Chapter: {group_name} ✦   |   ", style="bold white")
+    header_text.append(f"Lives: {'♥ ' * lives}", style="bold red")
+    header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style=tier_color)
+    
+    current_level = group[current_idx]
+    
+    # Left side: Puzzle Board & Hints
+    board_text = Text()
+    border_style = tier_color
+    if status == "error":
+        border_style = "bold red"
+    elif status == "success":
+        border_style = "bold green"
+        
+    for r in [1, 2]:
+        row_str = Text()
+        row_str.append(f"Row {r}  ", style="dim")
+        for c in range(length):
+            char = grid[r][c]
+            display_char = char if char else "_"
+            if r == active_row and c == active_col:
+                if status == "neutral":
+                    row_str.append(f"[ {display_char} ]", style="reverse bold cyan")
+                else:
+                    row_str.append(f"[ {display_char} ]", style=f"reverse {border_style}")
+            else:
+                row_str.append(f"  {display_char}  ", style="bold")
+        
+        board_text.append(row_str)
+        if r == 1:
+            board_text.append("\n\n")
+            
+    if manual_letters < 2:
+        hint_state = "  [dim][.] Hint[/dim]"
+    else:
+        hint_state = "  [dim][Max Hints Used][/dim]"
+        
+    hint_title = f"The Board{hint_state}"
+    board_panel = Panel(Align.center(board_text), title=hint_title, border_style=border_style, padding=(1, 2))
+    
+    hints_text = Text()
+    w1, w2 = current_level['w1'], current_level['w2']
+    
+    pos1 = current_level.get('pos1', 'Unknown')
+    if show_debrief:
+        hints_text.append(f"{w1.upper()} ", style="bold green")
+        hints_text.append(f"({pos1})\n", style="dim")
+        hints_text.append(f"{current_level['d1']}\n", style="italic")
+        if current_level.get('synonyms1'):
+            hints_text.append(f"Synonyms: {', '.join(current_level['synonyms1'])}\n", style="dim")
+        if current_level.get('example1'):
+            hints_text.append("  Example\n", style="bold white")
+            append_example_highlighted(hints_text, current_level['example1'], w1, "italic green")
+        if current_level.get('quote1'):
+            q = current_level['quote1']
+            hints_text.append("  Quote\n", style="bold white")
+            append_example_highlighted(hints_text, q['text'], w1, base_style="italic green")
+            hints_text.append(f"    — {q['reference']}\n", style="dim green")
+    else:
+        hints_text.append(f"Row 1: ", style="bold green")
+        hints_text.append(f"{current_level['d1']}\n")
+        
+    hints_text.append("\n")
+    
+    pos2 = current_level.get('pos2', 'Unknown')
+    if show_debrief:
+        hints_text.append(f"{w2.upper()} ", style="bold yellow")
+        hints_text.append(f"({pos2})\n", style="dim")
+        hints_text.append(f"{current_level['d2']}\n", style="italic")
+        if current_level.get('synonyms2'):
+            hints_text.append(f"Synonyms: {', '.join(current_level['synonyms2'])}\n", style="dim")
+        if current_level.get('example2'):
+            hints_text.append("  Example\n", style="bold white")
+            append_example_highlighted(hints_text, current_level['example2'], w2, "italic yellow")
+        if current_level.get('quote2'):
+            q = current_level['quote2']
+            hints_text.append("  Quote\n", style="bold white")
+            append_example_highlighted(hints_text, q['text'], w2, base_style="italic yellow")
+            hints_text.append(f"    — {q['reference']}\n", style="dim yellow")
+    else:
+        hints_text.append(f"Row 2: ", style="bold yellow")
+        hints_text.append(f"{current_level['d2']}\n")
+        
+    hints_panel = Panel(hints_text, title="Definitions", border_style=tier_color)
+    
+    # Right side: Word Gallery
+    gallery_text = Text()
+    for i in range(len(group)):
+        if i < current_idx or (i == current_idx and status == "success"):
+            # Solved
+            w1 = group[i]['w1']
+            w2 = group[i]['w2']
+            gallery_text.append(f"{i+1:2d}. {w1.upper()} ↔ {w2.upper()}\n", style="bold white")
+        elif i == current_idx:
+            # Current
+            gallery_text.append(f"{i+1:2d}. ", style="bold cyan")
+            gallery_text.append(f"{'-' * len(group[i]['w1'])} ↔ {'-' * len(group[i]['w2'])}\n", style="blink bold cyan")
+        else:
+            # Unsolved
+            gallery_text.append(f"{i+1:2d}. {'-' * len(group[i]['w1'])} ↔ {'-' * len(group[i]['w2'])}\n", style="dim")
+            
+    gallery_panel = Panel(gallery_text, title="Word Gallery", border_style=tier_color)
+    
+    # Layout using a hidden table for stable 50/50 sizing
+    layout_table = Table.grid(expand=True, padding=(0, 2))
+    layout_table.add_column(ratio=6)
+    layout_table.add_column(ratio=4)
+    layout_table.add_row(Group(board_panel, hints_panel), gallery_panel)
+    
+    footer_text = Text()
+    if message:
+        footer_text.append(Text.from_markup(f"{message}\n", style=border_style))
+    footer_text.append("CONTROLS: [A-Z] Type | [ARROWS] Move | [.] Hint | [ENTER] Submit | [ESC] Save & Exit", style="dim")
+    footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
+    
+    return Align.center(
+        Panel(
+            Group(header_panel, layout_table, footer_panel),
+            box=box.MINIMAL
+        )
+    )
+
 def append_example_highlighted(text, example, word, base_style="italic cyan"):
     """Append an example sentence to a Rich Text, bolding every occurrence of the target word."""
     bold_style = f"bold {base_style}"
@@ -555,73 +1066,6 @@ def append_example_highlighted(text, example, word, base_style="italic cyan"):
             text.append(part, style=base_style)
     text.append('"\n', style=base_style)
 
-def show_educational_debrief(level, status="win", points=0, earned_skip=False,
-                              earned_life=False, streak=0, multiplier=1.0):
-    clear_screen()
-    
-    w1, w2 = level["w1"], level["w2"]
-    d1, d2 = level["d1"], level["d2"]
-    
-    title_text = ""
-    color = "white"
-    if status == "win":
-        base_pts = int(points / multiplier)
-        if multiplier > 1.0:
-            title_text = f"✦ CORRECT! {base_pts} × {multiplier:.1f} = +{points} Points ✦"
-        else:
-            title_text = f"✦ CORRECT! +{points} Points ✦"
-        if earned_life:
-            title_text += " [ +1 ♥ ]"
-        elif earned_skip:
-            title_text += " [ +1 ► ]"
-        if streak >= 3:
-            title_text += f"  [ {streak} STREAK! ]"
-        color = "green"
-    elif status == "lose":
-        title_text = "[X] OUT OF LIVES! The words were... [X]"
-        color = "red"
-    elif status == "skip":
-        title_text = "► LEVEL SKIPPED! The words were... ►"
-        color = "yellow"
-        
-    text = Text()
-    
-    pos1 = level.get('pos1', 'Unknown')
-    text.append(f"\n{w1} ", style=f"bold {color}")
-    text.append(f"({pos1})\n", style="dim")
-    text.append(f"{d1}\n", style="italic")
-    if level.get('synonyms1'):
-        text.append(f"Synonyms: {', '.join(level['synonyms1'])}\n", style="dim")
-    if level.get('example1'):
-        text.append("  Example\n", style="bold white")
-        append_example_highlighted(text, level['example1'], w1)
-    if level.get('quote1'):
-        q = level['quote1']
-        text.append("  Quote\n", style="bold white")
-        append_example_highlighted(text, q['text'], w1, base_style="italic cyan")
-        text.append(f"    \u2014 {q['reference']}\n", style="dim cyan")
-    text.append("\n")
-    
-    pos2 = level.get('pos2', 'Unknown')
-    text.append(f"{w2} ", style=f"bold {color}")
-    text.append(f"({pos2})\n", style="dim")
-    text.append(f"{d2}\n", style="italic")
-    if level.get('synonyms2'):
-        text.append(f"Synonyms: {', '.join(level['synonyms2'])}\n", style="dim")
-    if level.get('example2'):
-        text.append("  Example\n", style="bold white")
-        append_example_highlighted(text, level['example2'], w2)
-    if level.get('quote2'):
-        q = level['quote2']
-        text.append("  Quote\n", style="bold white")
-        append_example_highlighted(text, q['text'], w2, base_style="italic cyan")
-        text.append(f"    \u2014 {q['reference']}\n", style="dim cyan")
-    
-    panel = Panel(Align.center(text), title=title_text, border_style=color, box=box.DOUBLE)
-    console.print(panel)
-    
-    console.print(Align.center("\n[dim]Press ANY KEY to continue...[/dim]"))
-    get_keypress()
 
 def show_tier_mastered(tier_name):
     clear_screen()
@@ -856,12 +1300,14 @@ def play_game(levels, high_score=0, mode="extensive"):
             hint_level = 0
             hint_positions = set()  # tracks which (row, col) pairs were revealed by hint
             lost_streak_value = 0
+            fails_on_level = 0
+            manual_letters_revealed = 0
             
             while True: 
                 clear_screen()
                 console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col, message, status,
-                                        total_levels_played + 1, successful_guesses, streak, hint_level))
+                                        total_levels_played + 1, successful_guesses, streak, hint_level, manual_letters=manual_letters_revealed))
                 
                 status = "neutral" 
                 
@@ -900,7 +1346,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                                 grid[active_row][active_col] = None
                                 grid[mirror_row][length - 1 - active_col] = None
 
-                elif cmd == '.' and hint_level < 2:
+                elif cmd == '.':
                     if hint_level == 0:
                         has_examples = bool(current_level.get('example1') or current_level.get('example2'))
                         if has_examples:
@@ -910,17 +1356,21 @@ def play_game(levels, high_score=0, mode="extensive"):
                             continue
 
                     # Reveal letter logic
-                    empty_cols = [c for c in range(length) if grid[1][c] is None]
-                    if empty_cols:
-                        hc = random.choice(empty_cols)
-                        grid[1][hc] = word1[hc]
-                        grid[2][length - 1 - hc] = word2[length - 1 - hc]
-                        hint_positions.add((1, hc))
-                        hint_positions.add((2, length - 1 - hc))
-                        hint_level = 2
-                        message = "[dim]Letter revealed: Round points halved.[/dim]"
+                    if manual_letters_revealed < 2:
+                        empty_cols = [c for c in range(length) if grid[1][c] is None]
+                        if empty_cols:
+                            hc = random.choice(empty_cols)
+                            grid[1][hc] = word1[hc]
+                            grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                            hint_positions.add((1, hc))
+                            hint_positions.add((2, length - 1 - hc))
+                            hint_level += 1
+                            manual_letters_revealed += 1
+                            message = "[dim]Letter revealed: Round points halved.[/dim]"
+                        else:
+                            message = "[dim]No empty cells to reveal.[/dim]"
                     else:
-                        message = "[dim]No empty cells to reveal.[/dim]"
+                        message = "[dim]Maximum letter hints used![/dim]"
                     status = "neutral"
                         
                 elif cmd == 'tab':
@@ -931,7 +1381,16 @@ def play_game(levels, high_score=0, mode="extensive"):
                         total_levels_played += 1
                         if lost_streak_value > 0:
                             show_streak_lost(lost_streak_value)
-                        show_educational_debrief(current_level, "skip")
+                        
+                        grid[1] = list(word1)
+                        grid[2] = list(word2)
+                        d_info = "Skipped! [Press ANY KEY to continue]"
+                        clear_screen()
+                        console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                                grid, length, active_row, active_col, d_info,
+                                                "error", total_levels_played, successful_guesses,
+                                                streak, hint_level, show_debrief=True))
+                        get_keypress()
                         break 
                     else:
                         message = "[bold red]⚠ No skips remaining![/bold red]"
@@ -946,6 +1405,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                         status = "error"
                     else:
                         if current_w1 == word1 and current_w2 == word2:
+                            save_unlocked_words(word1, word2)
                             pts_base = {"Very Easy": 100, "Easy": 200, "Medium": 300,
                                         "Hard": 400, "Very Hard": 500, "Insane": 600}
                             base_pts = pts_base.get(diff_name, 100)
@@ -980,14 +1440,26 @@ def play_game(levels, high_score=0, mode="extensive"):
                             
                             if lost_streak_value > 0:
                                 show_streak_lost(lost_streak_value)
-                            show_educational_debrief(current_level, "win", points_earned,
-                                                     earned_skip, earned_life, streak, multiplier)
-                            break 
+                            
+                            d_info = f"Earned {points_earned} pts! "
+                            if earned_skip: d_info += " +1 Skip "
+                            if earned_life: d_info += " +1 Life "
+                            if streak > 1: d_info += f" ({multiplier}x Streak) "
+                            d_info += "[Press ANY KEY to continue]"
+                            
+                            clear_screen()
+                            console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                                    grid, length, active_row, active_col, d_info,
+                                                    "success", total_levels_played, successful_guesses,
+                                                    streak, hint_level, show_debrief=True))
+                            get_keypress()
+                            break
                         else:
                             if streak > 0:
                                 lost_streak_value = streak
                             streak = 0
                             lives -= 1
+                            fails_on_level += 1
                             
                             shake_error(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col,
@@ -997,7 +1469,16 @@ def play_game(levels, high_score=0, mode="extensive"):
                                 total_levels_played += 1
                                 if lost_streak_value > 0:
                                     show_streak_lost(lost_streak_value)
-                                show_educational_debrief(current_level, "lose")
+                                    
+                                grid[1] = list(word1)
+                                grid[2] = list(word2)
+                                d_info = "Out of lives! [Press ANY KEY to continue]"
+                                clear_screen()
+                                console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
+                                                        grid, length, active_row, active_col, d_info,
+                                                        "error", total_levels_played, successful_guesses,
+                                                        streak, hint_level, show_debrief=True))
+                                get_keypress()
                                 
                                 # Save high score before showing summary
                                 new_high = max(score, high_score)
@@ -1021,7 +1502,19 @@ def play_game(levels, high_score=0, mode="extensive"):
                                         sys.exit()
                                 break
                             else:
-                                message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
+                                if fails_on_level % 2 == 0:
+                                    empty_cols = [c for c in range(length) if grid[1][c] is None]
+                                    if empty_cols:
+                                        hc = random.choice(empty_cols)
+                                        grid[1][hc] = word1[hc]
+                                        grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                                        hint_positions.add((1, hc))
+                                        hint_positions.add((2, length - 1 - hc))
+                                        message = "[bold red]✗ Incorrect! You lost a heart. (Auto-hint: Letter revealed!)[/bold red]"
+                                    else:
+                                        message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
+                                else:
+                                    message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
                                 status = "error"
                                 
                 elif len(cmd) == 1 and cmd.isalpha():
@@ -1037,6 +1530,148 @@ def play_game(levels, high_score=0, mode="extensive"):
             if game_over:
                 break 
 
+def play_group(groups, group_idx, level_progress):
+    group = groups[group_idx]
+    group_name = GROUP_NAMES[group_idx]
+    total_levels = len(group)
+    
+    # Start from where they left off, or 0 if they completed it
+    start_idx = level_progress.get(str(group_idx), 0)
+    if start_idx >= total_levels:
+        start_idx = 0
+        level_progress[str(group_idx)] = 0
+        save_level_progress(level_progress)
+        
+    for i in range(start_idx, total_levels):
+        current_level = group[i]
+        word1, word2 = current_level["w1"], current_level["w2"]
+        length = len(word1)
+        
+        lives = 6
+        
+        grid = {1: [None] * length, 2: [None] * length}
+        active_row = 1
+        active_col = 0
+        
+        message = ""
+        status = "neutral"
+        hint_level = 0
+        hint_positions = set()
+        level_done = False
+        fails_on_level = 0
+        manual_letters_revealed = 0
+        
+        while not level_done:
+            clear_screen()
+            console.print(create_campaign_ui(group, group_idx, i, grid, length, active_row, active_col, message, status, hint_level, lives, manual_letters=manual_letters_revealed))
+            
+            status = "neutral"
+            cmd = get_keypress()
+            message = ""
+            mirror_row = 2 if active_row == 1 else 1
+            
+            if cmd == '\x1b': 
+                return
+                
+            elif cmd in ('up', 'down'):
+                active_row = mirror_row
+                active_col = min(active_col, length - 1)
+                
+            elif cmd == 'left':
+                if active_col > 0: active_col -= 1
+                
+            elif cmd == 'right':
+                if active_col < length - 1: active_col += 1
+                
+            elif cmd == 'back':
+                if grid[active_row][active_col] is not None:
+                    if (active_row, active_col) not in hint_positions:
+                        grid[active_row][active_col] = None
+                        grid[mirror_row][length - 1 - active_col] = None
+                else:
+                    if active_col > 0:
+                        active_col -= 1
+                        if (active_row, active_col) not in hint_positions:
+                            grid[active_row][active_col] = None
+                            grid[mirror_row][length - 1 - active_col] = None
+
+            elif cmd == '.':
+                if manual_letters_revealed < 2:
+                    empty_cols = [c for c in range(length) if grid[1][c] is None]
+                    if empty_cols:
+                        hc = random.choice(empty_cols)
+                        grid[1][hc] = word1[hc]
+                        grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                        hint_positions.add((1, hc))
+                        hint_positions.add((2, length - 1 - hc))
+                        hint_level += 1
+                        manual_letters_revealed += 1
+                        message = "[dim]Letter revealed.[/dim]"
+                    else:
+                        message = "[dim]No empty cells to reveal.[/dim]"
+                else:
+                    message = "[dim]Maximum letter hints used![/dim]"
+                status = "neutral"
+                        
+            elif cmd == 'enter':
+                current_w1 = "".join([c for c in grid[1] if c])
+                current_w2 = "".join([c for c in grid[2] if c])
+                
+                if len(current_w1) < length:
+                    message = "[bold red]⚠ Please fill all letters before submitting![/bold red]"
+                    status = "error"
+                else:
+                    if current_w1 == word1 and current_w2 == word2:
+                        save_unlocked_words(word1, word2)
+                        clear_screen()
+                        console.print(create_campaign_ui(group, group_idx, i, grid, length, active_row, active_col, "Correct! [Press ANY KEY to continue]", "success", hint_level, lives, show_debrief=True))
+                        get_keypress()
+                        
+                        # Advance progress
+                        level_progress[str(group_idx)] = i + 1
+                        save_level_progress(level_progress)
+                        level_done = True
+                    else:
+                        lives -= 1
+                        fails_on_level += 1
+                        if lives <= 0:
+                            grid[1] = list(word1)
+                            grid[2] = list(word2)
+                            clear_screen()
+                            console.print(create_campaign_ui(group, group_idx, i, grid, length, active_row, active_col, "Out of lives! [Press ANY KEY to return]", "error", hint_level, lives, show_debrief=True))
+                            get_keypress()
+                            return
+                        else:
+                            if fails_on_level % 2 == 0:
+                                empty_cols = [c for c in range(length) if grid[1][c] is None]
+                                if empty_cols:
+                                    hc = random.choice(empty_cols)
+                                    grid[1][hc] = word1[hc]
+                                    grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                                    hint_positions.add((1, hc))
+                                    hint_positions.add((2, length - 1 - hc))
+                                    message = f"[bold red]✗ Incorrect. {lives} {'life' if lives == 1 else 'lives'} remaining! (Auto-hint: Letter revealed!)[/bold red]"
+                                else:
+                                    message = f"[bold red]✗ Incorrect. {lives} {'life' if lives == 1 else 'lives'} remaining![/bold red]"
+                            else:
+                                message = f"[bold red]✗ Incorrect. {lives} {'life' if lives == 1 else 'lives'} remaining![/bold red]"
+                            status = "error"
+                            
+            elif len(cmd) == 1 and cmd.isalpha():
+                char = cmd.upper()
+                if (active_row, active_col) not in hint_positions:
+                    grid[active_row][active_col] = char
+                    grid[mirror_row][length - 1 - active_col] = char
+                if active_col < length - 1:
+                    active_col += 1
+
+    # End of group reached
+    clear_screen()
+    text = Text("\n\n✦ CHAPTER COMPLETE ✦\n\n", style="bold bright_cyan")
+    text.append(f"You finished {group_name}!\n", style="bold white")
+    console.print(Panel(Align.center(text), border_style="cyan"))
+    time.sleep(2)
+
 
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
@@ -1047,17 +1682,64 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 if __name__ == "__main__":
-    CSV_FILE = resource_path('anadromes_ranked_clean.csv')
+    CSV_FILE = resource_path('anadromes_ranked_llm.csv')
     JSON_FILE = resource_path('dictionary_pruned.json')  
     
-    loaded_levels = load_game_data(CSV_FILE, JSON_FILE)
+    # Load grouped levels for Level Select mode
+    all_groups = load_groups(CSV_FILE, JSON_FILE)
+    
+    # Auto-unlock retroactively based on level_progress
+    scores = load_high_scores()
+    lp = scores.get("level_progress", {})
+    unlocked = set(scores.get("unlocked_words", []))
+    changed = False
+    
+    for g_idx, group in enumerate(all_groups):
+        solved_up_to = lp.get(str(g_idx), 0)
+        for i in range(solved_up_to):
+            if i < len(group):
+                w1_low = group[i]['w1'].lower()
+                w2_low = group[i]['w2'].lower()
+                if w1_low not in unlocked:
+                    unlocked.add(w1_low)
+                    changed = True
+                if w2_low not in unlocked:
+                    unlocked.add(w2_low)
+                    changed = True
+                    
+    if changed:
+        scores["unlocked_words"] = list(unlocked)
+        path = get_save_path()
+        try:
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    "compact_high_score": scores["compact"],
+                    "extensive_high_score": scores["extensive"],
+                    "level_progress": scores["level_progress"],
+                    "unlocked_words": scores["unlocked_words"]
+                }, f)
+        except Exception:
+            pass
+    
     while True:
         scores = load_high_scores()
         compact_hs = scores.get("compact", 0)
         extensive_hs = scores.get("extensive", 0)
+        level_progress = scores.get("level_progress", {})
         
         choice = show_title_screen(compact_hs, extensive_hs)
         if choice == "play":
+            while True:
+                grp_idx = show_level_select_screen(all_groups, level_progress)
+                if grp_idx is None:
+                    break
+                play_group(all_groups, grp_idx, level_progress)
+                # reload progress after returning
+                scores = load_high_scores()
+                level_progress = scores.get("level_progress", {})
+        elif choice == "arcade":
+            # For backward compatibility, load classic flat structure
+            loaded_levels = load_game_data(CSV_FILE, JSON_FILE)
             mode = show_mode_select_screen(compact_hs, extensive_hs)
             if mode == "back":
                 continue
@@ -1065,6 +1747,9 @@ if __name__ == "__main__":
             play_game(loaded_levels, active_hs, mode)
         elif choice == "tutorial":
             show_tutorial_screen()
+        elif choice == "compendium":
+            unlocked_words = set(scores.get("unlocked_words", []))
+            show_compendium_screen(all_groups, unlocked_words)
         elif choice == "exit":
             clear_screen()
             sys.exit()
