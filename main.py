@@ -297,9 +297,14 @@ def load_groups(csv_file, json_file):
         themes_map[t].append(lvl)
         
     themes_ordered = sorted(themes_map.keys())
-    groups = [themes_map[t] for t in themes_ordered]
+    theme_groups = [themes_map[t] for t in themes_ordered]
     
-    return groups, themes_ordered
+    orig_groups = []
+    for i in range(0, len(levels), GROUP_SIZE):
+        orig_groups.append(levels[i:i+GROUP_SIZE])
+    orig_names = GROUP_NAMES[:len(orig_groups)]
+    
+    return theme_groups, themes_ordered, orig_groups, orig_names
 
 # OS-specific raw keyboard input handling
 try:
@@ -472,11 +477,19 @@ def show_mode_select_screen(compact_hs=0, extensive_hs=0):
         elif cmd in ('left', '\x1b'):
             return "back"
 
-def show_level_select_screen(groups, group_names, level_progress):
+def show_level_select_screen(theme_groups, theme_names, orig_groups, orig_names, level_progress):
     selected = 0
-    num_groups = len(groups)
+    mode = "theme"
     
     while True:
+        groups = theme_groups if mode == "theme" else orig_groups
+        group_names = theme_names if mode == "theme" else orig_names
+        num_groups = len(groups)
+        
+        # Adjust selected if it exceeds bounds after switching
+        if selected >= num_groups:
+            selected = num_groups - 1
+            
         term_width = shutil.get_terminal_size((80, 24)).columns
         box_width = 21 # 18 for box + 3 for spacing
         cols = max(1, (term_width - 8) // box_width)
@@ -484,7 +497,8 @@ def show_level_select_screen(groups, group_names, level_progress):
         
         clear_screen()
         
-        header_text = Text("✦ SELECT YOUR CATEGORY ✦", style="bold magenta")
+        switch_label = "Difficulty Chapters" if mode == "theme" else "Themed Categories"
+        header_text = Text.from_markup(f"[bold magenta]\u2726 SELECT YOUR CATEGORY \u2726[/bold magenta]   [dim](Press \\[TAB] for {switch_label})[/dim]")
         header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style="magenta", padding=(1, 2))
         
         grid_text = Text()
@@ -583,14 +597,18 @@ def show_level_select_screen(groups, group_names, level_progress):
             
         grid_panel = Panel(Align.center(Text.from_markup(str(grid_text))), border_style="cyan", padding=(0, 2))
         
-        footer_text = Text("[ARROWS] Navigate   [ENTER] Play Category   [ESC] Back to Menu", style="dim")
+        footer_text = Text("[ARROWS] Navigate   [ENTER] Play Category   [TAB] Switch Mode   [ESC] Back to Menu", style="dim")
         footer_panel = Panel(Align.center(footer_text), box=box.MINIMAL)
         
         ui_panel = Panel(Group(header_panel, grid_panel, footer_panel), box=box.MINIMAL)
         console.print(Align.center(ui_panel))
         
         cmd = get_keypress()
-        if cmd == 'up':
+        if cmd == 'tab':
+            mode = "original" if mode == "theme" else "theme"
+            selected = 0
+            continue
+        elif cmd == 'up':
             if selected >= cols:
                 selected -= cols
         elif cmd == 'down':
@@ -606,9 +624,9 @@ def show_level_select_screen(groups, group_names, level_progress):
             if selected % cols < cols - 1 and selected + 1 < num_groups:
                 selected += 1
         elif cmd == 'enter':
-            return selected
+            return selected, mode
         elif cmd == '\x1b':
-            return None
+            return None, None
 
 def show_tutorial_screen():
     segments = [
@@ -807,7 +825,7 @@ def get_streak_label(streak):
 
 def create_ui(score, skips, lives, diff_name, progress, current_level, grid, length,
               active_row, active_col, message, status="neutral", level=1, wins=0,
-              streak=0, hint_level=0, show_debrief=False, manual_letters=0):
+              streak=0, hint_level=0, show_debrief=False, manual_letters=0, hint_positions=None):
     
     tier_color = DIFF_COLORS.get(diff_name, "cyan")
     
@@ -906,16 +924,21 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
             char = grid[r][c]
             display_char = char if char else "_"
             
-            # Mark hinted cells differently
-            is_hinted = hint_level >= 2 and char is not None and grid[r][c] == char
+            if hint_positions and (r, c) in hint_positions:
+                text_style = "bold cyan"
+            else:
+                text_style = "bold"
             
             if r == active_row and c == active_col:
                 if status == "neutral":
-                    row_str.append(f"[ {display_char} ]", style="reverse bold cyan")
+                    row_str.append(f"[ {display_char} ]", style=f"reverse {text_style}")
                 else:
-                    row_str.append(f"[ {display_char} ]", style=f"reverse {border_style}")
+                    if text_style == "bold cyan":
+                        row_str.append(f"[ {display_char} ]", style=f"reverse bold cyan")
+                    else:
+                        row_str.append(f"[ {display_char} ]", style=f"reverse {border_style}")
             else:
-                row_str.append(f"  {display_char}  ", style="bold")
+                row_str.append(f"  {display_char}  ", style=text_style)
         
         board_text.append(row_str)
         if r == 1:
@@ -954,7 +977,7 @@ def create_ui(score, skips, lives, diff_name, progress, current_level, grid, len
 from rich.columns import Columns
 from rich.table import Table
 
-def create_campaign_ui(group, group_name, tier_color, current_idx, grid, length, active_row, active_col, message, status, hint_level, lives, show_debrief=False, manual_letters=0):
+def create_campaign_ui(group, group_name, tier_color, current_idx, grid, length, active_row, active_col, message, status, hint_level, lives, show_debrief=False, manual_letters=0, hint_positions=None, is_original_mode=False, unlocked_words=None):
     
     current_level = group[current_idx]
     diff = current_level.get("difficulty", "Unknown")
@@ -963,6 +986,8 @@ def create_campaign_ui(group, group_name, tier_color, current_idx, grid, length,
     header_text.append(f"✦ Category: {group_name} ✦   |   ", style="bold white")
     header_text.append(f"Lives: {'♥ ' * lives}   |   ", style="bold red")
     header_text.append(f"Difficulty: {diff}", style="bold yellow")
+    if is_original_mode and current_level.get("theme"):
+        header_text.append(f"   |   Theme: {current_level.get('theme')}", style="bold magenta")
     header_panel = Panel(Align.center(header_text), box=box.ROUNDED, style=tier_color)
     
     # Left side: Puzzle Board & Hints
@@ -979,20 +1004,30 @@ def create_campaign_ui(group, group_name, tier_color, current_idx, grid, length,
         for c in range(length):
             char = grid[r][c]
             display_char = char if char else "_"
+            if hint_positions and (r, c) in hint_positions:
+                text_style = "bold cyan"
+            else:
+                text_style = "bold"
+                
             if r == active_row and c == active_col:
                 if status == "neutral":
-                    row_str.append(f"[ {display_char} ]", style="reverse bold cyan")
+                    row_str.append(f"[ {display_char} ]", style=f"reverse {text_style}")
                 else:
-                    row_str.append(f"[ {display_char} ]", style=f"reverse {border_style}")
+                    if text_style == "bold cyan":
+                        row_str.append(f"[ {display_char} ]", style=f"reverse bold cyan")
+                    else:
+                        row_str.append(f"[ {display_char} ]", style=f"reverse {border_style}")
             else:
-                row_str.append(f"  {display_char}  ", style="bold")
+                row_str.append(f"  {display_char}  ", style=text_style)
         
         board_text.append(row_str)
         if r == 1:
             board_text.append("\n\n")
             
-    if manual_letters < 2:
-        hint_state = "  [dim][.] Hint[/dim]"
+    max_hints = max(2, length - 2)
+    hints_remaining = max_hints - manual_letters
+    if hints_remaining > 0:
+        hint_state = f"  [dim][.] Hint ({hints_remaining} remaining)[/dim]"
     else:
         hint_state = "  [dim][Max Hints Used][/dim]"
         
@@ -1175,18 +1210,18 @@ def show_game_over_summary(score, high_score, successful_guesses, total_played,
     console.print(Align.center("\n[dim]Play Again? (Y/N)[/dim]"))
 
 def shake_error(score, skips, lives, diff_name, progress, current_level, grid,
-                length, active_row, active_col, level, wins, streak, hint_level=0):
+                length, active_row, active_col, level, wins, streak, hint_level=0, hint_positions=None):
     # Quick visual flicker to sell the wrong-answer sting
     for _ in range(3):
         clear_screen()
         console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                 grid, length, active_row, active_col,
-                                "[bold red]✗ Incorrect![/bold red]", "error", level, wins, streak, hint_level))
+                                "[bold red]✗ Incorrect![/bold red]", "error", level, wins, streak, hint_level, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
         time.sleep(0.07)
         clear_screen()
         console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                 grid, length, active_row, active_col,
-                                "", "neutral", level, wins, streak, hint_level))
+                                "", "neutral", level, wins, streak, hint_level, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
         time.sleep(0.05)
 
 
@@ -1340,7 +1375,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                 clear_screen()
                 console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col, message, status,
-                                        total_levels_played + 1, successful_guesses, streak, hint_level, manual_letters=manual_letters_revealed))
+                                        total_levels_played + 1, successful_guesses, streak, hint_level, manual_letters=manual_letters_revealed, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                 
                 status = "neutral" 
                 
@@ -1388,9 +1423,10 @@ def play_game(levels, high_score=0, mode="extensive"):
                             status = "neutral"
                             continue
 
+                    max_hints = max(2, length - 2)
                     # Reveal letter logic
-                    if manual_letters_revealed < 2:
-                        empty_cols = [c for c in range(length) if grid[1][c] is None]
+                    if manual_letters_revealed < max_hints:
+                        empty_cols = [c for c in range(length) if grid[1][c] != word1[c]]
                         if empty_cols:
                             hc = random.choice(empty_cols)
                             grid[1][hc] = word1[hc]
@@ -1422,7 +1458,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                         console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                                 grid, length, active_row, active_col, d_info,
                                                 "error", total_levels_played, successful_guesses,
-                                                streak, hint_level, show_debrief=True))
+                                                streak, hint_level, show_debrief=True, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                         get_keypress()
                         break 
                     else:
@@ -1468,7 +1504,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                             console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                                     grid, length, active_row, active_col, "Correct!",
                                                     "success", total_levels_played, successful_guesses,
-                                                    streak, hint_level))
+                                                    streak, hint_level, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                             time.sleep(0.6)
                             
                             if lost_streak_value > 0:
@@ -1484,7 +1520,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                             console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                                     grid, length, active_row, active_col, d_info,
                                                     "success", total_levels_played, successful_guesses,
-                                                    streak, hint_level, show_debrief=True))
+                                                    streak, hint_level, show_debrief=True, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                             get_keypress()
                             break
                         else:
@@ -1494,9 +1530,23 @@ def play_game(levels, high_score=0, mode="extensive"):
                             lives -= 1
                             fails_on_level += 1
                             
+                            # 1. Compute hint BEFORE shake_error so the flash includes the hint!
+                            auto_hinted = False
+                            if lives > 0 and fails_on_level % 2 == 0:
+                                empty_cols = [c for c in range(length) if grid[1][c] != word1[c]]
+                                if empty_cols:
+                                    import random
+                                    hc = random.choice(empty_cols)
+                                    grid[1][hc] = word1[hc]
+                                    grid[2][length - 1 - hc] = word2[length - 1 - hc]
+                                    hint_positions.add((1, hc))
+                                    hint_positions.add((2, length - 1 - hc))
+                                    auto_hinted = True
+                                    
+                            # 2. Flash error
                             shake_error(score, skips, lives, diff_name, progress, current_level,
                                         grid, length, active_row, active_col,
-                                        total_levels_played + 1, successful_guesses, streak, hint_level)
+                                        total_levels_played + 1, successful_guesses, streak, hint_level, hint_positions=hint_positions)
                             
                             if lives <= 0:
                                 total_levels_played += 1
@@ -1510,7 +1560,7 @@ def play_game(levels, high_score=0, mode="extensive"):
                                 console.print(create_ui(score, skips, lives, diff_name, progress, current_level,
                                                         grid, length, active_row, active_col, d_info,
                                                         "error", total_levels_played, successful_guesses,
-                                                        streak, hint_level, show_debrief=True))
+                                                        streak, hint_level, show_debrief=True, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                                 get_keypress()
                                 
                                 # Save high score before showing summary
@@ -1535,17 +1585,8 @@ def play_game(levels, high_score=0, mode="extensive"):
                                         sys.exit()
                                 break
                             else:
-                                if fails_on_level % 2 == 0:
-                                    empty_cols = [c for c in range(length) if grid[1][c] is None]
-                                    if empty_cols:
-                                        hc = random.choice(empty_cols)
-                                        grid[1][hc] = word1[hc]
-                                        grid[2][length - 1 - hc] = word2[length - 1 - hc]
-                                        hint_positions.add((1, hc))
-                                        hint_positions.add((2, length - 1 - hc))
-                                        message = "[bold red]✗ Incorrect! You lost a heart. (Auto-hint: Letter revealed!)[/bold red]"
-                                    else:
-                                        message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
+                                if auto_hinted:
+                                    message = "[bold red]✗ Incorrect! You lost a heart. (Auto-hint: Letter revealed!)[/bold red]"
                                 else:
                                     message = "[bold red]✗ Incorrect! You lost a heart.[/bold red]"
                                 status = "error"
@@ -1563,17 +1604,19 @@ def play_game(levels, high_score=0, mode="extensive"):
             if game_over:
                 break 
 
-def play_group(groups, group_idx, group_names, level_progress):
+def play_group(groups, group_idx, group_names, level_progress, is_original_mode=False, unlocked_words=None):
+    if unlocked_words is None:
+        unlocked_words = set()
     group = groups[group_idx]
     group_name = group_names[group_idx]
     tier_color = GROUP_COLORS[group_idx % len(GROUP_COLORS)]
     total_levels = len(group)
     
     # Start from where they left off, or 0 if they completed it
-    start_idx = level_progress.get(str(group_idx), 0)
+    start_idx = level_progress.get(group_name, 0)
     if start_idx >= total_levels:
         start_idx = 0
-        level_progress[str(group_idx)] = 0
+        level_progress[group_name] = 0
         save_level_progress(level_progress)
         
     for i in range(start_idx, total_levels):
@@ -1581,6 +1624,13 @@ def play_group(groups, group_idx, group_names, level_progress):
         word1, word2 = current_level["w1"], current_level["w2"]
         length = len(word1)
         
+        if word1.lower() in unlocked_words:
+            new_prog = i + 1
+            if level_progress.get(group_name, 0) < new_prog:
+                level_progress[group_name] = new_prog
+                save_level_progress(level_progress)
+            continue
+            
         lives = 6
         
         grid = {1: [None] * length, 2: [None] * length}
@@ -1597,7 +1647,7 @@ def play_group(groups, group_idx, group_names, level_progress):
         
         while not level_done:
             clear_screen()
-            console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, message, status, hint_level, lives, manual_letters=manual_letters_revealed))
+            console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, message, status, hint_level, lives, manual_letters=manual_letters_revealed, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
             
             status = "neutral"
             cmd = get_keypress()
@@ -1618,10 +1668,9 @@ def play_group(groups, group_idx, group_names, level_progress):
                 if active_col < length - 1: active_col += 1
                 
             elif cmd == 'back':
-                if grid[active_row][active_col] is not None:
-                    if (active_row, active_col) not in hint_positions:
-                        grid[active_row][active_col] = None
-                        grid[mirror_row][length - 1 - active_col] = None
+                if grid[active_row][active_col] is not None and (active_row, active_col) not in hint_positions:
+                    grid[active_row][active_col] = None
+                    grid[mirror_row][length - 1 - active_col] = None
                 else:
                     if active_col > 0:
                         active_col -= 1
@@ -1630,8 +1679,9 @@ def play_group(groups, group_idx, group_names, level_progress):
                             grid[mirror_row][length - 1 - active_col] = None
 
             elif cmd == '.':
-                if manual_letters_revealed < 2:
-                    empty_cols = [c for c in range(length) if grid[1][c] is None]
+                max_hints = max(2, length - 2)
+                if manual_letters_revealed < max_hints:
+                    empty_cols = [c for c in range(length) if grid[1][c] != word1[c]]
                     if empty_cols:
                         hc = random.choice(empty_cols)
                         grid[1][hc] = word1[hc]
@@ -1658,11 +1708,11 @@ def play_group(groups, group_idx, group_names, level_progress):
                     if current_w1 == word1 and current_w2 == word2:
                         save_unlocked_words(word1, word2)
                         clear_screen()
-                        console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, "Correct! [Press ANY KEY to continue]", "success", hint_level, lives, show_debrief=True))
+                        console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, "Correct! [Press ANY KEY to continue]", "success", hint_level, lives, show_debrief=True, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                         get_keypress()
                         
                         # Advance progress
-                        level_progress[str(group_idx)] = i + 1
+                        level_progress[group_name] = i + 1
                         save_level_progress(level_progress)
                         level_done = True
                     else:
@@ -1672,12 +1722,12 @@ def play_group(groups, group_idx, group_names, level_progress):
                             grid[1] = list(word1)
                             grid[2] = list(word2)
                             clear_screen()
-                            console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, "Out of lives! [Press ANY KEY to return]", "error", hint_level, lives, show_debrief=True))
+                            console.print(create_campaign_ui(group, group_name, tier_color, i, grid, length, active_row, active_col, "Out of lives! [Press ANY KEY to return]", "error", hint_level, lives, show_debrief=True, hint_positions=hint_positions, is_original_mode=is_original_mode, unlocked_words=unlocked_words))
                             get_keypress()
                             return
                         else:
                             if fails_on_level % 2 == 0:
-                                empty_cols = [c for c in range(length) if grid[1][c] is None]
+                                empty_cols = [c for c in range(length) if grid[1][c] != word1[c]]
                                 if empty_cols:
                                     hc = random.choice(empty_cols)
                                     grid[1][hc] = word1[hc]
@@ -1720,7 +1770,7 @@ if __name__ == "__main__":
     JSON_FILE = resource_path('dictionary_pruned.json')  
     
     # Load grouped levels for Level Select mode
-    all_groups, group_names = load_groups(CSV_FILE, JSON_FILE)
+    theme_groups, theme_names, orig_groups, orig_names = load_groups(CSV_FILE, JSON_FILE)
     
     # Auto-unlock retroactively based on level_progress
     scores = load_high_scores()
@@ -1728,19 +1778,30 @@ if __name__ == "__main__":
     unlocked = set(scores.get("unlocked_words", []))
     changed = False
     
-    for g_idx, group in enumerate(all_groups):
-        solved_up_to = lp.get(str(g_idx), 0)
-        for i in range(solved_up_to):
-            if i < len(group):
-                w1_low = group[i]['w1'].lower()
-                w2_low = group[i]['w2'].lower()
-                if w1_low not in unlocked:
-                    unlocked.add(w1_low)
-                    changed = True
-                if w2_low not in unlocked:
-                    unlocked.add(w2_low)
-                    changed = True
-                    
+    # Migrate old level_progress format (string indices) to original mode names
+    for g_idx, orig_name in enumerate(orig_names):
+        old_key = str(g_idx)
+        if old_key in lp:
+            if orig_name not in lp:
+                lp[orig_name] = lp[old_key]
+            del lp[old_key]
+            changed = True
+            
+    # Auto-unlock based on progress in BOTH modes
+    for mode_groups, mode_names in [(theme_groups, theme_names), (orig_groups, orig_names)]:
+        for g_idx, group in enumerate(mode_groups):
+            solved_up_to = lp.get(mode_names[g_idx], 0)
+            for i in range(solved_up_to):
+                if i < len(group):
+                    w1_low = group[i]['w1'].lower()
+                    w2_low = group[i]['w2'].lower()
+                    if w1_low not in unlocked:
+                        unlocked.add(w1_low)
+                        changed = True
+                    if w2_low not in unlocked:
+                        unlocked.add(w2_low)
+                        changed = True
+    
     if changed:
         scores["unlocked_words"] = list(unlocked)
         path = get_save_path()
@@ -1764,10 +1825,12 @@ if __name__ == "__main__":
         choice = show_title_screen(compact_hs, extensive_hs)
         if choice == "play":
             while True:
-                grp_idx = show_level_select_screen(all_groups, group_names, level_progress)
+                grp_idx, mode = show_level_select_screen(theme_groups, theme_names, orig_groups, orig_names, level_progress)
                 if grp_idx is None:
                     break
-                play_group(all_groups, grp_idx, group_names, level_progress)
+                active_groups = theme_groups if mode == "theme" else orig_groups
+                active_names = theme_names if mode == "theme" else orig_names
+                play_group(active_groups, grp_idx, active_names, level_progress, is_original_mode=(mode == "original"), unlocked_words=unlocked)
                 # reload progress after returning
                 scores = load_high_scores()
                 level_progress = scores.get("level_progress", {})
@@ -1783,7 +1846,7 @@ if __name__ == "__main__":
             show_tutorial_screen()
         elif choice == "compendium":
             unlocked_words = set(scores.get("unlocked_words", []))
-            show_compendium_screen(all_groups, unlocked_words)
+            show_compendium_screen(orig_groups, unlocked_words)
         elif choice == "exit":
             clear_screen()
             sys.exit()
