@@ -514,7 +514,7 @@ def show_level_select_screen(theme_groups, theme_names, orig_groups, orig_names,
                     name = group_names[idx]
                     grp_color = GROUP_COLORS[idx % len(GROUP_COLORS)]
                     total = len(groups[idx])
-                    prog = level_progress.get(str(idx), 0)
+                    prog = level_progress.get(name, level_progress.get(str(idx), 0))
                     
                     if prog >= total:
                         frac_str = f" ✓ {total}/{total} "
