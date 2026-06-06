@@ -6,7 +6,7 @@ An "anadrome" is a word that forms a completely different word when spelled back
 
 ## What's inside
 
-I grouped the main puzzles into 19 chapters, and I spent a lot of time carefully mapping out the difficulty curve so it scales up nicely as you progress. If you just want to chase high scores, there's a classic endless arcade mode where you can build up streaks and earn skips.
+I grouped the main puzzles into 20 themed chapters (like Animal Kingdom, Sound Effects, Internet, etc.), and I spent a lot of time carefully mapping out the difficulty curve so it scales up nicely as you progress. If you just want to chase high scores, there's a classic endless arcade mode where you can build up streaks and earn skips.
 
 Since there are a ton of obscure words in here, I added a persistent compendium. Any time you solve a puzzle, the words get unlocked and saved there so you can go back and read their full dictionary entries. You get 6 lives per puzzle, and if you run out, the game automatically reveals a letter for you so you don't get permanently stuck.
 
