@@ -1766,8 +1766,8 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 if __name__ == "__main__":
-    CSV_FILE = resource_path('anadromes_ranked_llm.csv')
-    JSON_FILE = resource_path('dictionary_pruned.json')  
+    CSV_FILE = resource_path('assets/data/anadromes_ranked_llm.csv')
+    JSON_FILE = resource_path('assets/data/dictionary_pruned.json')  
     
     # Load grouped levels for Level Select mode
     theme_groups, theme_names, orig_groups, orig_names = load_groups(CSV_FILE, JSON_FILE)
