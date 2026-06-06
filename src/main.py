@@ -1615,10 +1615,16 @@ def play_group(groups, group_idx, group_names, level_progress, is_original_mode=
     # Start from where they left off, or 0 if they completed it
     start_idx = level_progress.get(group_name, 0)
     if start_idx >= total_levels:
-        start_idx = 0
-        level_progress[group_name] = 0
-        save_level_progress(level_progress)
-        
+        # Already completed — show completion screen and go back to level select
+        clear_screen()
+        text = Text("\n\n✦ CATEGORY COMPLETE ✦\n\n", style="bold bright_cyan")
+        text.append(f"{group_name} is already finished!\n", style="bold white")
+        text.append("\nAll words in this category have been solved.\n", style="dim")
+        console.print(Panel(Align.center(text), border_style="cyan", box=box.DOUBLE))
+        console.print(Align.center("[dim]Press any key to return to category select...[/dim]"))
+        get_keypress()
+        return
+
     for i in range(start_idx, total_levels):
         current_level = group[i]
         word1, word2 = current_level["w1"], current_level["w2"]
@@ -1749,12 +1755,14 @@ def play_group(groups, group_idx, group_names, level_progress, is_original_mode=
                 if active_col < length - 1:
                     active_col += 1
 
-    # End of group reached
+    # End of group reached — show completion and return to level select
     clear_screen()
-    text = Text("\n\n✦ CHAPTER COMPLETE ✦\n\n", style="bold bright_cyan")
+    text = Text("\n\n✦ CATEGORY COMPLETE ✦\n\n", style="bold bright_cyan")
     text.append(f"You finished {group_name}!\n", style="bold white")
-    console.print(Panel(Align.center(text), border_style="cyan"))
-    time.sleep(2)
+    text.append("\nAll words solved. Returning to category select...\n", style="dim")
+    console.print(Panel(Align.center(text), border_style="cyan", box=box.DOUBLE))
+    console.print(Align.center("[dim]Press any key to continue...[/dim]"))
+    get_keypress()
 
 
 def resource_path(relative_path):
