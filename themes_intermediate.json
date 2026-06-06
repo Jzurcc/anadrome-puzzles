@@ -1,0 +1,1822 @@
+{
+  "saw_was": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "dog_god": {
+    "c1": "Animal Kingdom",
+    "c2": "What's in a Name?",
+    "c3": "Emotional Rollercoaster"
+  },
+  "emit_time": {
+    "c1": "Sound Effects",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "evil_live": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Smooth Criminals",
+    "c3": "Grammar Police"
+  },
+  "fig_gif": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "ave_eva": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "pis_sip": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "cod_doc": {
+    "c1": "Animal Kingdom",
+    "c2": "What's in a Name?",
+    "c3": "Emotional Rollercoaster"
+  },
+  "snaps_spans": {
+    "c1": "Sound Effects",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "hoo_ooh": {
+    "c1": "Sound Effects",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "bol_lob": {
+    "c1": "Sound Effects",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "sloops_spools": {
+    "c1": "Sound Effects",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "bun_nub": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "avo_ova": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "desserts_stressed": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "dah_had": {
+    "c1": "Sound Effects",
+    "c2": "Grammar Police",
+    "c3": "Body Language"
+  },
+  "now_won": {
+    "c1": "Grammar Police",
+    "c2": "Sound Effects",
+    "c3": "Body Language"
+  },
+  "may_yam": {
+    "c1": "What's in a Name?",
+    "c2": "Grammar Police",
+    "c3": "Body Language"
+  },
+  "part_trap": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "know_wonk": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "got_tog": {
+    "c1": "Body Language",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "new_wen": {
+    "c1": "Body Language",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "net_ten": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "door_rood": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "keep_peek": {
+    "c1": "Body Language",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "pot_top": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "meet_teem": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "boy_yob": {
+    "c1": "A Bit Insulting",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "bad_dab": {
+    "c1": "A Bit Insulting",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "bed_deb": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "big_gib": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "nav_van": {
+    "c1": "Nautical Nonsense",
+    "c2": "Heavy Machinery",
+    "c3": "Home Sweet Home"
+  },
+  "per_rep": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Body Language"
+  },
+  "pay_yap": {
+    "c1": "Sound Effects",
+    "c2": "Food Coma",
+    "c3": "Home Sweet Home"
+  },
+  "dat_tad": {
+    "c1": "Double Vowels",
+    "c2": "Food Coma",
+    "c3": "Body Language"
+  },
+  "don_nod": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "doom_mood": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Spooky Season",
+    "c3": "What's in a Name?"
+  },
+  "dim_mid": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "diam_maid": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "gas_sag": {
+    "c1": "Sound Effects",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "deer_reed": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "hem_meh": {
+    "c1": "Fashion Disasters",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "pit_tip": {
+    "c1": "Home Sweet Home",
+    "c2": "Heavy Machinery",
+    "c3": "Nautical Nonsense"
+  },
+  "eel_lee": {
+    "c1": "Animal Kingdom",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "gar_rag": {
+    "c1": "Fashion Disasters",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "cap_pac": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Grammar Police"
+  },
+  "dos_sod": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "bag_gab": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Emotional Rollercoaster"
+  },
+  "gel_leg": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "dew_wed": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "loop_pool": {
+    "c1": "Home Sweet Home",
+    "c2": "Animal Kingdom",
+    "c3": "Nautical Nonsense"
+  },
+  "gut_tug": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Action Movie"
+  },
+  "nap_pan": {
+    "c1": "Home Sweet Home",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Oops! My Bad"
+  },
+  "lap_pal": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "bin_nib": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Grammar Police"
+  },
+  "nit_tin": {
+    "c1": "Gross Out!",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "hay_yah": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "bis_sib": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Animal Kingdom",
+    "c3": "Grammar Police"
+  },
+  "res_ser": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Internet Culture"
+  },
+  "gnus_sung": {
+    "c1": "Animal Kingdom",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Grammar Police"
+  },
+  "dor_rod": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "map_pam": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "mar_ram": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Smooth Criminals"
+  },
+  "pupils_slipup": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Grammar Police",
+    "c3": "Oops! My Bad"
+  },
+  "nip_pin": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "pat_tap": {
+    "c1": "Sound Effects",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "rat_tar": {
+    "c1": "Animal Kingdom",
+    "c2": "Gross Out!",
+    "c3": "Home Sweet Home"
+  },
+  "cam_mac": {
+    "c1": "Home Sweet Home",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "min_nim": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "gem_meg": {
+    "c1": "Home Sweet Home",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "snot_tons": {
+    "c1": "Gross Out!",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "mat_tam": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "gum_mug": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "bus_sub": {
+    "c1": "Heavy Machinery",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "bur_rub": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Heavy Machinery"
+  },
+  "mils_slim": {
+    "c1": "Heavy Machinery",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "maws_swam": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "bats_stab": {
+    "c1": "Animal Kingdom",
+    "c2": "Action Movie",
+    "c3": "Home Sweet Home"
+  },
+  "maps_spam": {
+    "c1": "Home Sweet Home",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "bat_tab": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Fashion Disasters"
+  },
+  "pins_snip": {
+    "c1": "Heavy Machinery",
+    "c2": "Home Sweet Home",
+    "c3": "Oops! My Bad"
+  },
+  "flog_golf": {
+    "c1": "Action Movie",
+    "c2": "Home Sweet Home",
+    "c3": "Sports Center"
+  },
+  "pals_slap": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "A Bit Insulting"
+  },
+  "paws_swap": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Oops! My Bad"
+  },
+  "burg_grub": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Gross Out!"
+  },
+  "keel_leek": {
+    "c1": "Nautical Nonsense",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "ban_nab": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Smooth Criminals"
+  },
+  "gulp_plug": {
+    "c1": "Home Sweet Home",
+    "c2": "Oops! My Bad",
+    "c3": "Grammar Police"
+  },
+  "gat_tag": {
+    "c1": "Action Movie",
+    "c2": "Home Sweet Home",
+    "c3": "Smooth Criminals"
+  },
+  "bro_orb": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "What's in a Name?"
+  },
+  "bonk_knob": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Sound Effects"
+  },
+  "dap_pad": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Sound Effects"
+  },
+  "mart_tram": {
+    "c1": "Heavy Machinery",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "duo_oud": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Emotional Rollercoaster"
+  },
+  "bal_lab": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "ergo_ogre": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Spooky Season",
+    "c3": "Animal Kingdom"
+  },
+  "kay_yak": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "ger_reg": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "demit_timed": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Sound Effects"
+  },
+  "nuts_stun": {
+    "c1": "Gross Out!",
+    "c2": "A Bit Insulting",
+    "c3": "Body Language"
+  },
+  "pst_tsp": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Sound Effects"
+  },
+  "mop_pom": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "A Bit Insulting"
+  },
+  "civ_vic": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "bros_sorb": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Animal Kingdom"
+  },
+  "sports_strops": {
+    "c1": "Sports Center",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "loots_stool": {
+    "c1": "Gross Out!",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "buts_stub": {
+    "c1": "Grammar Police",
+    "c2": "Fashion Disasters",
+    "c3": "Heavy Machinery"
+  },
+  "denim_mined": {
+    "c1": "Weird Science",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "oat_tao": {
+    "c1": "What's in a Name?",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Grammar Police"
+  },
+  "pes_sep": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Animal Kingdom"
+  },
+  "avid_diva": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Internet Culture",
+    "c3": "A Bit Insulting"
+  },
+  "doh_hod": {
+    "c1": "Sound Effects",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "bod_dob": {
+    "c1": "A Bit Insulting",
+    "c2": "Smooth Criminals",
+    "c3": "Home Sweet Home"
+  },
+  "pacer_recap": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "macs_scam": {
+    "c1": "Smooth Criminals",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "oohs_shoo": {
+    "c1": "Sound Effects",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "pees_seep": {
+    "c1": "Gross Out!",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "spay_yaps": {
+    "c1": "Gross Out!",
+    "c2": "Animal Kingdom",
+    "c3": "Home Sweet Home"
+  },
+  "cav_vac": {
+    "c1": "Nautical Nonsense",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "dep_ped": {
+    "c1": "Grammar Police",
+    "c2": "Heavy Machinery",
+    "c3": "Home Sweet Home"
+  },
+  "duh_hud": {
+    "c1": "A Bit Insulting",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "dup_pud": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Fashion Disasters"
+  },
+  "not_ton": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Heavy Machinery"
+  },
+  "are_era": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Weird Science"
+  },
+  "but_tub": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "man_nam": {
+    "c1": "Animal Kingdom",
+    "c2": "Spooky Season",
+    "c3": "What's in a Name?"
+  },
+  "der_red": {
+    "c1": "A Bit Insulting",
+    "c2": "Grammar Police",
+    "c3": "Body Language"
+  },
+  "def_fed": {
+    "c1": "A Bit Insulting",
+    "c2": "Grammar Police",
+    "c3": "Smooth Criminals"
+  },
+  "nos_son": {
+    "c1": "Animal Kingdom",
+    "c2": "Gross Out!",
+    "c3": "Home Sweet Home"
+  },
+  "emos_some": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "let_tel": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "den_ned": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "raw_war": {
+    "c1": "Action Movie",
+    "c2": "Gross Out!",
+    "c3": "Heavy Machinery"
+  },
+  "way_yaw": {
+    "c1": "Nautical Nonsense",
+    "c2": "Heavy Machinery",
+    "c3": "Grammar Police"
+  },
+  "moor_room": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "pas_sap": {
+    "c1": "Home Sweet Home",
+    "c2": "Animal Kingdom",
+    "c3": "Weird Science"
+  },
+  "dem_med": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Body Language"
+  },
+  "par_rap": {
+    "c1": "Action Movie",
+    "c2": "Heavy Machinery",
+    "c3": "Sports Center"
+  },
+  "mon_nom": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "mot_tom": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "dial_laid": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "air_ria": {
+    "c1": "Nautical Nonsense",
+    "c2": "Weird Science",
+    "c3": "Grammar Police"
+  },
+  "parts_strap": {
+    "c1": "Home Sweet Home",
+    "c2": "Heavy Machinery",
+    "c3": "Sports Center"
+  },
+  "spot_tops": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "pots_stop": {
+    "c1": "Home Sweet Home",
+    "c2": "Heavy Machinery",
+    "c3": "Oops! My Bad"
+  },
+  "draw_ward": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "pets_step": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Sports Center"
+  },
+  "peels_sleep": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "dam_mad": {
+    "c1": "Gross Out!",
+    "c2": "Animal Kingdom",
+    "c3": "Home Sweet Home"
+  },
+  "lit_til": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "mus_sum": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "dir_rid": {
+    "c1": "Heavy Machinery",
+    "c2": "Nautical Nonsense",
+    "c3": "Action Movie"
+  },
+  "drawer_reward": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Food Coma"
+  },
+  "edit_tide": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Body Language"
+  },
+  "deeps_speed": {
+    "c1": "Nautical Nonsense",
+    "c2": "Heavy Machinery",
+    "c3": "Sports Center"
+  },
+  "aim_mia": {
+    "c1": "Grammar Police",
+    "c2": "Action Movie",
+    "c3": "Internet Culture"
+  },
+  "lias_sail": {
+    "c1": "Nautical Nonsense",
+    "c2": "Weird Science",
+    "c3": "Home Sweet Home"
+  },
+  "kcal_lack": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Food Coma"
+  },
+  "spots_stops": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "dray_yard": {
+    "c1": "Heavy Machinery",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "eros_sore": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Body Language",
+    "c3": "Gross Out!"
+  },
+  "ben_neb": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "bid_dib": {
+    "c1": "Action Movie",
+    "c2": "Smooth Criminals",
+    "c3": "Grammar Police"
+  },
+  "nat_tan": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "lion_noil": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "drag_gard": {
+    "c1": "Heavy Machinery",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "deg_ged": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Nautical Nonsense"
+  },
+  "taw_wat": {
+    "c1": "Spooky Season",
+    "c2": "Animal Kingdom",
+    "c3": "Home Sweet Home"
+  },
+  "spit_tips": {
+    "c1": "Sound Effects",
+    "c2": "Food Coma",
+    "c3": "Gross Out!"
+  },
+  "tort_trot": {
+    "c1": "Action Movie",
+    "c2": "Smooth Criminals",
+    "c3": "Grammar Police"
+  },
+  "nut_tun": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Fashion Disasters"
+  },
+  "dot_tod": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "pans_snap": {
+    "c1": "Sound Effects",
+    "c2": "Home Sweet Home",
+    "c3": "Oops! My Bad"
+  },
+  "pools_sloop": {
+    "c1": "Nautical Nonsense",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "ports_strop": {
+    "c1": "Heavy Machinery",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "loot_tool": {
+    "c1": "Smooth Criminals",
+    "c2": "Food Coma",
+    "c3": "Home Sweet Home"
+  },
+  "dort_trod": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "sway_yaws": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Animal Kingdom",
+    "c3": "Weird Science"
+  },
+  "rot_tor": {
+    "c1": "Gross Out!",
+    "c2": "Home Sweet Home",
+    "c3": "Heavy Machinery"
+  },
+  "gen_neg": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Weird Science"
+  },
+  "jar_raj": {
+    "c1": "Home Sweet Home",
+    "c2": "Animal Kingdom",
+    "c3": "Weird Science"
+  },
+  "bud_dub": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "hoop_pooh": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Emotional Rollercoaster"
+  },
+  "dart_trad": {
+    "c1": "Action Movie",
+    "c2": "Heavy Machinery",
+    "c3": "Grammar Police"
+  },
+  "cos_soc": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "leer_reel": {
+    "c1": "Body Language",
+    "c2": "Sound Effects",
+    "c3": "Grammar Police"
+  },
+  "cit_tic": {
+    "c1": "Grammar Police",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "enol_lone": {
+    "c1": "Weird Science",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "daw_wad": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "gam_mag": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "lav_val": {
+    "c1": "Home Sweet Home",
+    "c2": "Gross Out!",
+    "c3": "Body Language"
+  },
+  "tow_wot": {
+    "c1": "Heavy Machinery",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "nips_spin": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "gal_lag": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "naps_span": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Emotional Rollercoaster"
+  },
+  "etas_sate": {
+    "c1": "Animal Kingdom",
+    "c2": "Food Coma",
+    "c3": "Home Sweet Home"
+  },
+  "ajar_raja": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "keels_sleek": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "gats_stag": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "stew_wets": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Body Language"
+  },
+  "gnaw_wang": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "snoops_spoons": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "decal_laced": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Body Language"
+  },
+  "brag_garb": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Emotional Rollercoaster"
+  },
+  "dual_laud": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Home Sweet Home"
+  },
+  "corp_proc": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "gals_slag": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "cram_marc": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "reit_tier": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "loops_spool": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Body Language"
+  },
+  "buns_snub": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "snit_tins": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "lop_pol": {
+    "c1": "Heavy Machinery",
+    "c2": "Action Movie",
+    "c3": "Smooth Criminals"
+  },
+  "fao_oaf": {
+    "c1": "A Bit Insulting",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "reknit_tinker": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "knits_stink": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "dorp_prod": {
+    "c1": "Nautical Nonsense",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "gnat_tang": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "darg_grad": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Weird Science"
+  },
+  "gnats_stang": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Spooky Season"
+  },
+  "snips_spins": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Sports Center"
+  },
+  "giro_orig": {
+    "c1": "Weird Science",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "lees_seel": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Weird Science"
+  },
+  "stat_tats": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "delos_soled": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Weird Science"
+  },
+  "arb_bra": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Animal Kingdom"
+  },
+  "dahs_shad": {
+    "c1": "Animal Kingdom",
+    "c2": "Nautical Nonsense",
+    "c3": "Food Coma"
+  },
+  "pols_slop": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Fashion Disasters"
+  },
+  "aril_lira": {
+    "c1": "Weird Science",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "poons_snoop": {
+    "c1": "Internet Culture",
+    "c2": "Smooth Criminals",
+    "c3": "A Bit Insulting"
+  },
+  "saps_spas": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "smut_tums": {
+    "c1": "Gross Out!",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "rebut_tuber": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Body Language"
+  },
+  "dialer_relaid": {
+    "c1": "Heavy Machinery",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "eviler_relive": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Grammar Police",
+    "c3": "Weird Science"
+  },
+  "looter_retool": {
+    "c1": "Smooth Criminals",
+    "c2": "Action Movie",
+    "c3": "Heavy Machinery"
+  },
+  "recaps_spacer": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "rennet_tenner": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "sprits_stirps": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "marcs_scram": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Animal Kingdom"
+  },
+  "nonet_tenon": {
+    "c1": "Weird Science",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "resat_taser": {
+    "c1": "Smooth Criminals",
+    "c2": "Action Movie",
+    "c3": "Gross Out!"
+  },
+  "sprat_tarps": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "stows_swots": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "gorp_prog": {
+    "c1": "Food Coma",
+    "c2": "Internet Culture",
+    "c3": "Home Sweet Home"
+  },
+  "prat_tarp": {
+    "c1": "A Bit Insulting",
+    "c2": "Home Sweet Home",
+    "c3": "Fashion Disasters"
+  },
+  "swat_taws": {
+    "c1": "Action Movie",
+    "c2": "Gross Out!",
+    "c3": "Smooth Criminals"
+  },
+  "swot_tows": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "gro_org": {
+    "c1": "Internet Culture",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "and_dna": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Home Sweet Home"
+  },
+  "dias_said": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Home Sweet Home"
+  },
+  "del_led": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Home Sweet Home"
+  },
+  "devil_lived": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Spooky Season",
+    "c3": "Home Sweet Home"
+  },
+  "deep_peed": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "mir_rim": {
+    "c1": "Nautical Nonsense",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "guns_snug": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Animal Kingdom"
+  },
+  "mas_sam": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Animal Kingdom"
+  },
+  "han_nah": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Animal Kingdom",
+    "c3": "Internet Culture"
+  },
+  "flow_wolf": {
+    "c1": "Nautical Nonsense",
+    "c2": "Animal Kingdom",
+    "c3": "Weird Science"
+  },
+  "rats_star": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "knar_rank": {
+    "c1": "Heavy Machinery",
+    "c2": "Animal Kingdom",
+    "c3": "Home Sweet Home"
+  },
+  "dine_enid": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "dan_nad": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "liar_rail": {
+    "c1": "A Bit Insulting",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "fires_serif": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "draws_sward": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Animal Kingdom"
+  },
+  "dig_gid": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Animal Kingdom"
+  },
+  "decaf_faced": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "smart_trams": {
+    "c1": "Internet Culture",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "deem_meed": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "lever_revel": {
+    "c1": "Heavy Machinery",
+    "c2": "Weird Science",
+    "c3": "Action Movie"
+  },
+  "bor_rob": {
+    "c1": "Smooth Criminals",
+    "c2": "A Bit Insulting",
+    "c3": "Grammar Police"
+  },
+  "trow_wort": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Food Coma"
+  },
+  "bah_hab": {
+    "c1": "A Bit Insulting",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "dar_rad": {
+    "c1": "Animal Kingdom",
+    "c2": "Weird Science",
+    "c3": "Nautical Nonsense"
+  },
+  "gan_nag": {
+    "c1": "Animal Kingdom",
+    "c2": "Internet Culture",
+    "c3": "Emotional Rollercoaster"
+  },
+  "jam_maj": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Grammar Police"
+  },
+  "bard_drab": {
+    "c1": "Fashion Disasters",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Animal Kingdom"
+  },
+  "leper_repel": {
+    "c1": "Gross Out!",
+    "c2": "Animal Kingdom",
+    "c3": "Body Language"
+  },
+  "lager_regal": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "depot_toped": {
+    "c1": "Heavy Machinery",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "dom_mod": {
+    "c1": "Fashion Disasters",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Animal Kingdom"
+  },
+  "cal_lac": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Grammar Police"
+  },
+  "spat_taps": {
+    "c1": "Sound Effects",
+    "c2": "Action Movie",
+    "c3": "Heavy Machinery"
+  },
+  "diaper_repaid": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Grammar Police"
+  },
+  "fret_terf": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "denies_seined": {
+    "c1": "Grammar Police",
+    "c2": "Action Movie",
+    "c3": "Heavy Machinery"
+  },
+  "avis_siva": {
+    "c1": "Animal Kingdom",
+    "c2": "Weird Science",
+    "c3": "Grammar Police"
+  },
+  "ailed_delia": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "A Bit Insulting"
+  },
+  "remit_timer": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Internet Culture"
+  },
+  "raps_spar": {
+    "c1": "Sound Effects",
+    "c2": "Action Movie",
+    "c3": "Sports Center"
+  },
+  "gums_smug": {
+    "c1": "Gross Out!",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "lair_rial": {
+    "c1": "Home Sweet Home",
+    "c2": "Animal Kingdom",
+    "c3": "Nautical Nonsense"
+  },
+  "emir_rime": {
+    "c1": "Animal Kingdom",
+    "c2": "Weird Science",
+    "c3": "Grammar Police"
+  },
+  "flor_rolf": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Food Coma"
+  },
+  "ante_etna": {
+    "c1": "Home Sweet Home",
+    "c2": "Weird Science",
+    "c3": "Grammar Police"
+  },
+  "debut_tubed": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Internet Culture"
+  },
+  "redraw_warder": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "retros_sorter": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Home Sweet Home"
+  },
+  "laver_reval": {
+    "c1": "Home Sweet Home",
+    "c2": "Body Language",
+    "c3": "Grammar Police"
+  },
+  "gram_marg": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "grus_surg": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Heavy Machinery"
+  },
+  "aryl_lyra": {
+    "c1": "Fashion Disasters",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Home Sweet Home"
+  },
+  "ait_tia": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "darter_retrad": {
+    "c1": "Animal Kingdom",
+    "c2": "Sports Center",
+    "c3": "Home Sweet Home"
+  },
+  "anal_lana": {
+    "c1": "Gross Out!",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "knaps_spank": {
+    "c1": "Body Language",
+    "c2": "Home Sweet Home",
+    "c3": "Oops! My Bad"
+  },
+  "deffer_reffed": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "sleets_steels": {
+    "c1": "Home Sweet Home",
+    "c2": "Heavy Machinery",
+    "c3": "Grammar Police"
+  },
+  "abut_tuba": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Body Language"
+  },
+  "auks_skua": {
+    "c1": "Animal Kingdom",
+    "c2": "Nautical Nonsense",
+    "c3": "Home Sweet Home"
+  },
+  "stet_tets": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Emotional Rollercoaster"
+  },
+  "isp_psi": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "mho_ohm": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Home Sweet Home"
+  },
+  "pos_sop": {
+    "c1": "Home Sweet Home",
+    "c2": "Grammar Police",
+    "c3": "Emotional Rollercoaster"
+  },
+  "nor_ron": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Gross Out!"
+  },
+  "nus_sun": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "los_sol": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Nautical Nonsense"
+  },
+  "six_xis": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Sports Center"
+  },
+  "secret_terces": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "What's in a Name?"
+  },
+  "las_sal": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Gross Out!"
+  },
+  "animal_lamina": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "mos_som": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "notes_seton": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Oops! My Bad"
+  },
+  "mes_sem": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Weird Science"
+  },
+  "deliver_reviled": {
+    "c1": "Grammar Police",
+    "c2": "Emotional Rollercoaster",
+    "c3": "Smooth Criminals"
+  },
+  "ages_sega": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Sports Center"
+  },
+  "ate_eta": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "What's in a Name?"
+  },
+  "fer_ref": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Smooth Criminals"
+  },
+  "straw_warts": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Gross Out!"
+  },
+  "harris_sirrah": {
+    "c1": "Smooth Criminals",
+    "c2": "A Bit Insulting",
+    "c3": "Home Sweet Home"
+  },
+  "pus_sup": {
+    "c1": "Gross Out!",
+    "c2": "Body Language",
+    "c3": "Weird Science"
+  },
+  "lev_vel": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Internet Culture"
+  },
+  "ark_kra": {
+    "c1": "Spooky Season",
+    "c2": "Animal Kingdom",
+    "c3": "Home Sweet Home"
+  },
+  "amor_roma": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "What's in a Name?",
+    "c3": "Home Sweet Home"
+  },
+  "mut_tum": {
+    "c1": "Animal Kingdom",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "dag_gad": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "cor_roc": {
+    "c1": "Animal Kingdom",
+    "c2": "Home Sweet Home",
+    "c3": "Spooky Season"
+  },
+  "fir_rif": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Animal Kingdom"
+  },
+  "sonnet_tennos": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Home Sweet Home",
+    "c3": "Grammar Police"
+  },
+  "bog_gob": {
+    "c1": "Gross Out!",
+    "c2": "Body Language",
+    "c3": "Home Sweet Home"
+  },
+  "girt_trig": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Animal Kingdom"
+  },
+  "lin_nil": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "hap_pah": {
+    "c1": "Emotional Rollercoaster",
+    "c2": "Home Sweet Home",
+    "c3": "Body Language"
+  },
+  "langer_regnal": {
+    "c1": "A Bit Insulting",
+    "c2": "Smooth Criminals",
+    "c3": "Home Sweet Home"
+  },
+  "denier_reined": {
+    "c1": "Weird Science",
+    "c2": "Grammar Police",
+    "c3": "Heavy Machinery"
+  },
+  "ats_sta": {
+    "c1": "Grammar Police",
+    "c2": "Nautical Nonsense",
+    "c3": "Internet Culture"
+  },
+  "feer_reef": {
+    "c1": "Nautical Nonsense",
+    "c2": "Weird Science",
+    "c3": "Home Sweet Home"
+  },
+  "larum_mural": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Weird Science"
+  },
+  "arak_kara": {
+    "c1": "What's in a Name?",
+    "c2": "Home Sweet Home",
+    "c3": "Internet Culture"
+  },
+  "agar_raga": {
+    "c1": "Weird Science",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "abas_saba": {
+    "c1": "Food Coma",
+    "c2": "Home Sweet Home",
+    "c3": "Gross Out!"
+  },
+  "hales_selah": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Home Sweet Home"
+  },
+  "ayr_rya": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Internet Culture"
+  },
+  "camus_sumac": {
+    "c1": "Home Sweet Home",
+    "c2": "Food Coma",
+    "c3": "Gross Out!"
+  },
+  "airts_stria": {
+    "c1": "Grammar Police",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "dedal_laded": {
+    "c1": "Grammar Police",
+    "c2": "Weird Science",
+    "c3": "Heavy Machinery"
+  },
+  "sakis_sikas": {
+    "c1": "Animal Kingdom",
+    "c2": "Sports Center",
+    "c3": "Home Sweet Home"
+  },
+  "bots_stob": {
+    "c1": "Heavy Machinery",
+    "c2": "Home Sweet Home",
+    "c3": "Nautical Nonsense"
+  },
+  "atp_pta": {
+    "c1": "Grammar Police",
+    "c2": "Internet Culture",
+    "c3": "Home Sweet Home"
+  },
+  "kor_rok": {
+    "c1": "Weird Science",
+    "c2": "Nautical Nonsense",
+    "c3": "Grammar Police"
+  },
+  "dis_sid": {
+    "c1": "A Bit Insulting",
+    "c2": "Internet Culture",
+    "c3": "Grammar Police"
+  },
+  "stu_uts": {
+    "c1": "Home Sweet Home",
+    "c2": "Fashion Disasters",
+    "c3": "Grammar Police"
+  },
+  "pow_wop": {
+    "c1": "Sound Effects",
+    "c2": "A Bit Insulting",
+    "c3": "Smooth Criminals"
+  }
+}
