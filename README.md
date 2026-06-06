@@ -4,9 +4,9 @@
 
 I had this random idea at 5 AM the other night and decided to build it out into a full terminal game. 
 
-An "anadrome" is a word that forms a completely different word when spelled backwards (like DOG and GOD). The game gives you two dictionary definitions, and you have to figure out the pair of words that match them. It's fully playable right in your terminal and doesn't require any messy dependencies.
+An "anadrome" is a word that forms a completely different word when spelled backwards (like DOG and GOD). The game gives you two dictionary definitions, and you have to figure out the pair of words that match them. 
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3f1e326f-78a5-43b1-9385-28ccfba0871a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/378b35cd-fbd9-40e3-8c96-bb4ed0e4d749" />
 
 ## What's inside
 
@@ -14,7 +14,9 @@ I grouped the main puzzles into 20 themed chapters (like Animal Kingdom, Sound E
 
 Since there are a ton of obscure words in here, I added a persistent compendium. Any time you solve a puzzle, the words get unlocked and saved there so you can go back and read their full dictionary entries. You get 6 lives per puzzle, and if you run out, the game automatically reveals a letter for you so you don't get permanently stuck.
 
-<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/378b35cd-fbd9-40e3-8c96-bb4ed0e4d749" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3f1e326f-78a5-43b1-9385-28ccfba0871a" />
+
+
 
 
 ## How it was made
