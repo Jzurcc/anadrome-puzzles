@@ -2,7 +2,7 @@
 
 # Anadromes
 
-I had this random idea at 5 AM the other night and decided to build it out into a full terminal game. 
+I had this random idea at 5 AM and decided to build it out into a full terminal game. 
 
 An "anadrome" is a word that forms a completely different word when spelled backwards (like DOG and GOD). The game gives you two dictionary definitions, and you have to figure out the pair of words that match them. 
 
@@ -10,7 +10,7 @@ An "anadrome" is a word that forms a completely different word when spelled back
 
 ## What's inside
 
-I grouped the main puzzles into 20 themed chapters (like Animal Kingdom, Sound Effects, Internet, etc.), and I spent a lot of time carefully mapping out the difficulty curve so it scales up nicely as you progress. If you just want to chase high scores, there's a classic endless arcade mode where you can build up streaks and earn skips.
+I grouped the main puzzles into 20 difficulty chapters and 14 themed chapters (like Animal Kingdom, Sound Effects, Internet, etc.), and I spent a lot of time carefully mapping out the difficulty curve so it scales up nicely as you progress. If you just want to chase high scores, there's a classic endless arcade mode where you can build up streaks and earn skips.
 
 Since there are a ton of obscure words in here, I added a persistent compendium. Any time you solve a puzzle, the words get unlocked and saved there so you can go back and read their full dictionary entries. You get 6 lives per puzzle, and if you run out, the game automatically reveals a letter for you so you don't get permanently stuck.
 
